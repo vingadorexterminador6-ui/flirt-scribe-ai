@@ -19,6 +19,7 @@ export type ConversaResult = {
   tom?: string;
   significado?: string;
   suggestions: Suggestion[];
+  perguntas?: string[];
 };
 
 const SYSTEM = `Você é o "Conversa Quente AI", um especialista brasileiro/português em conversas românticas, flerte e relacionamentos.
