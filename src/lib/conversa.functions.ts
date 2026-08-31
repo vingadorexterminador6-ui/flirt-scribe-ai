@@ -143,5 +143,8 @@ export const gerarRespostas = createServerFn({ method: "POST" })
             .filter((s) => s && typeof s.text === "string")
             .map((s) => ({ emoji: s.emoji ?? "💬", label: s.label ?? "Sugestão", text: s.text }))
         : [],
+      perguntas: Array.isArray(parsed.perguntas)
+        ? parsed.perguntas.filter((p): p is string => typeof p === "string" && p.trim().length > 0).slice(0, 4)
+        : [],
     };
   });
