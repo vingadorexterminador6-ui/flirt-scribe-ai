@@ -55,7 +55,13 @@ function userPrompt(data: ConversaInput): string {
   const ctx = `Contexto da personalização:
 - A pessoa é: ${data.persona}
 - Objetivo: ${data.goal}
-- Intensidade desejada: ${data.intensity}`;
+- Intensidade desejada: ${data.intensity}${
+    data.platform
+      ? `
+- Plataforma onde a mensagem vai ser enviada: ${data.platform}${data.platformStyle ? ` (${data.platformStyle})` : ""}. Adapta o formato e o tamanho das mensagens a essa plataforma.`
+      : ""
+  }`;
+
 
   switch (data.mode) {
     case "screenshot":
