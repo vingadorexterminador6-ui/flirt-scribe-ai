@@ -424,12 +424,15 @@ function Gerador({
 
       <Personalizacao prefs={prefs} onChange={setPrefs} />
 
+      <PlataformaPicker platform={platform} onSelect={select} />
+
       <button
         type="button"
         disabled={!canRun || loading}
         onClick={run}
-        className="heat-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+        className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
       >
+
         {loading ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
         {loading ? "A IA está pensando..." : "Gerar respostas"}
       </button>
