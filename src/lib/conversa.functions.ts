@@ -84,7 +84,7 @@ Gere 5 mensagens diferentes para enviar ao parceiro(a), variando o tom dentro da
     case "pensando":
       return `${ctx}
 
-Modo "Deixa Pensando". Gere 5 frases sugestivas, confiantes e sensuais que criem curiosidade, expectativa e tensão romântica — sem vulgaridade e sem descrever atos sexuais.
+Modo "Deixa Pensando". Gere 5 frases ultra provocantes, diretas e confiantes que criem desejo intenso, curiosidade e tensão — a outra pessoa deve ficar pensando nisso o dia todo. Ousado, mas sem vulgaridade e sem descrever atos sexuais.
 ${data.message ? `Contexto do usuário: "${data.message}"` : ""}
 Use "label" curto (ex.: Mistério, Provocação, Confiança). Deixe "leitura", "tom" e "significado" vazios.`;
   }
