@@ -311,11 +311,14 @@ function Gerador({
         data: {
           mode: screen,
           ...prefs,
+          platform: platform.name,
+          platformStyle: platform.style,
           ...(message.trim() ? { message: message.trim() } : {}),
           ...(image ? { imageDataUrl: image } : {}),
           ...(category ? { category } : {}),
         },
       });
+
       setResult(res);
       if (res.suggestions.length) {
         add({
