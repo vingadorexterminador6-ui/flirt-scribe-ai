@@ -59,6 +59,9 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-azul: var(--azul);
+  --color-azul-foreground: var(--azul-foreground);
+
 }
 
 :root {
@@ -97,15 +100,32 @@
   --sidebar-border: oklch(0.31 0.045 12);
   --sidebar-ring: oklch(0.63 0.23 18);
 
+  --azul: oklch(0.62 0.19 250);
+  --azul-foreground: oklch(0.99 0.005 250);
+
   --gradient-heat: linear-gradient(135deg, oklch(0.63 0.23 18), oklch(0.66 0.21 350));
+  --gradient-cool: linear-gradient(135deg, oklch(0.62 0.19 250), oklch(0.7 0.16 210));
+  --gradient-fusion: linear-gradient(
+    135deg,
+    oklch(0.63 0.23 18),
+    oklch(0.66 0.21 350) 45%,
+    oklch(0.62 0.19 250)
+  );
   --gradient-glow: radial-gradient(
     120% 90% at 50% 0%,
-    color-mix(in oklab, oklch(0.63 0.23 18) 34%, transparent),
+    color-mix(in oklab, oklch(0.63 0.23 18) 30%, transparent),
+    transparent 70%
+  );
+  --gradient-glow-cool: radial-gradient(
+    100% 70% at 80% 100%,
+    color-mix(in oklab, oklch(0.62 0.19 250) 26%, transparent),
     transparent 70%
   );
   --shadow-heat: 0 18px 45px -18px color-mix(in oklab, oklch(0.63 0.23 18) 70%, transparent);
+  --shadow-cool: 0 18px 45px -18px color-mix(in oklab, oklch(0.62 0.19 250) 70%, transparent);
   --shadow-card: 0 12px 30px -20px oklch(0 0 0 / 80%);
 }
+
 
 .dark {
   color-scheme: dark;
@@ -151,11 +171,36 @@
   box-shadow: var(--shadow-heat);
 }
 
+@utility cool-gradient {
+  background-image: var(--gradient-cool);
+}
+
+@utility cool-text {
+  background-image: var(--gradient-cool);
+  background-clip: text;
+  color: transparent;
+}
+
+@utility cool-glow {
+  box-shadow: var(--shadow-cool);
+}
+
+@utility fusion-gradient {
+  background-image: var(--gradient-fusion);
+}
+
+@utility fusion-text {
+  background-image: var(--gradient-fusion);
+  background-clip: text;
+  color: transparent;
+}
+
 @utility surface-card {
-  background-color: var(--color-card);
+  background-color: color-mix(in oklab, var(--color-card) 92%, transparent);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-card);
+  backdrop-filter: blur(6px);
 }
 
 @layer base {
@@ -169,10 +214,11 @@
 
   body {
     background-color: var(--color-background);
-    background-image: var(--gradient-glow);
+    background-image: var(--gradient-glow), var(--gradient-glow-cool);
     background-attachment: fixed;
     color: var(--color-foreground);
     -webkit-tap-highlight-color: transparent;
   }
 }
+
 

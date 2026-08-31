@@ -18,9 +18,11 @@ import {
 } from "lucide-react";
 import { gerarRespostas, type ConversaResult } from "@/lib/conversa.functions";
 import { defaultPrefs, Personalizacao, type Prefs } from "@/components/Personalizacao";
+import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
 import { CopyButton, Sugestoes } from "@/components/Sugestoes";
 import { useHistory } from "@/lib/history";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -179,17 +181,20 @@ function Home({ onOpen }: { onOpen: (s: Screen) => void }) {
   return (
     <div className="animate-rise space-y-6">
       <header className="space-y-3 pt-6 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground shadow-sm">
           <Flame className="size-3.5 text-primary" /> Conversa Quente AI
+          <span className="size-1 rounded-full bg-azul" />
+          <span className="cool-text font-semibold">sincroniza com os teus apps</span>
         </span>
-        <h1 className="text-3xl font-bold leading-tight tracking-tight">
-          Nunca mais fique sem saber <span className="heat-text">o que responder.</span>
+        <h1 className="text-[2rem] font-bold leading-tight tracking-tight">
+          Nunca mais fique sem saber <span className="fusion-text">o que responder.</span>
         </h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Envie a mensagem ou screenshot. A IA entende o contexto e cria a resposta perfeita para
-          você.
+          Envie a mensagem ou screenshot. A IA entende o contexto, adapta ao app que você usa e cria
+          a resposta perfeita.
         </p>
       </header>
+
 
       <div className="space-y-3">
         {MENU.map((m, i) => (
@@ -278,7 +283,9 @@ function Gerador({
 }) {
   const call = useServerFn(gerarRespostas);
   const { add } = useHistory();
+  const { platform, select } = usePlatform();
   const [message, setMessage] = useState("");
+
   const [image, setImage] = useState<string | null>(null);
   const [category, setCategory] = useState(
     screen === "conquista" ? CONQUISTA[0]! : screen === "namorados" ? NAMORADOS[0]! : "",
@@ -307,11 +314,14 @@ function Gerador({
         data: {
           mode: screen,
           ...prefs,
+          platform: platform.name,
+          platformStyle: platform.style,
           ...(message.trim() ? { message: message.trim() } : {}),
           ...(image ? { imageDataUrl: image } : {}),
           ...(category ? { category } : {}),
         },
       });
+
       setResult(res);
       if (res.suggestions.length) {
         add({
@@ -417,12 +427,15 @@ function Gerador({
 
       <Personalizacao prefs={prefs} onChange={setPrefs} />
 
+      <PlataformaPicker platform={platform} onSelect={select} />
+
       <button
         type="button"
         disabled={!canRun || loading}
         onClick={run}
-        className="heat-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+        className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
       >
+
         {loading ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
         {loading ? "A IA está pensando..." : "Gerar respostas"}
       </button>
@@ -435,7 +448,7 @@ function Gerador({
 
       {result && (
         <div className="space-y-3">
-          <Sugestoes result={result} />
+          <Sugestoes result={result} platform={platform} />
           <button
             type="button"
             onClick={() => {
