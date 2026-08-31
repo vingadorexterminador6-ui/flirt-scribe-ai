@@ -280,7 +280,9 @@ function Gerador({
 }) {
   const call = useServerFn(gerarRespostas);
   const { add } = useHistory();
+  const { platform, select } = usePlatform();
   const [message, setMessage] = useState("");
+
   const [image, setImage] = useState<string | null>(null);
   const [category, setCategory] = useState(
     screen === "conquista" ? CONQUISTA[0]! : screen === "namorados" ? NAMORADOS[0]! : "",
