@@ -168,11 +168,36 @@
   box-shadow: var(--shadow-heat);
 }
 
+@utility cool-gradient {
+  background-image: var(--gradient-cool);
+}
+
+@utility cool-text {
+  background-image: var(--gradient-cool);
+  background-clip: text;
+  color: transparent;
+}
+
+@utility cool-glow {
+  box-shadow: var(--shadow-cool);
+}
+
+@utility fusion-gradient {
+  background-image: var(--gradient-fusion);
+}
+
+@utility fusion-text {
+  background-image: var(--gradient-fusion);
+  background-clip: text;
+  color: transparent;
+}
+
 @utility surface-card {
-  background-color: var(--color-card);
+  background-color: color-mix(in oklab, var(--color-card) 92%, transparent);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-card);
+  backdrop-filter: blur(6px);
 }
 
 @layer base {
@@ -186,10 +211,11 @@
 
   body {
     background-color: var(--color-background);
-    background-image: var(--gradient-glow);
+    background-image: var(--gradient-glow), var(--gradient-glow-cool);
     background-attachment: fixed;
     color: var(--color-foreground);
     -webkit-tap-highlight-color: transparent;
   }
 }
+
 
