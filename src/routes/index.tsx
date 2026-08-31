@@ -181,17 +181,20 @@ function Home({ onOpen }: { onOpen: (s: Screen) => void }) {
   return (
     <div className="animate-rise space-y-6">
       <header className="space-y-3 pt-6 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground shadow-sm">
           <Flame className="size-3.5 text-primary" /> Conversa Quente AI
+          <span className="size-1 rounded-full bg-azul" />
+          <span className="cool-text font-semibold">sincroniza com os teus apps</span>
         </span>
-        <h1 className="text-3xl font-bold leading-tight tracking-tight">
-          Nunca mais fique sem saber <span className="heat-text">o que responder.</span>
+        <h1 className="text-[2rem] font-bold leading-tight tracking-tight">
+          Nunca mais fique sem saber <span className="fusion-text">o que responder.</span>
         </h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Envie a mensagem ou screenshot. A IA entende o contexto e cria a resposta perfeita para
-          você.
+          Envie a mensagem ou screenshot. A IA entende o contexto, adapta ao app que você usa e cria
+          a resposta perfeita.
         </p>
       </header>
+
 
       <div className="space-y-3">
         {MENU.map((m, i) => (
