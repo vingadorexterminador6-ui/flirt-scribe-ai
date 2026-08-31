@@ -58,6 +58,25 @@ export function Sugestoes({ result }: { result: ConversaResult }) {
           <CopyButton text={s.text} />
         </div>
       ))}
+
+      {result.perguntas && result.perguntas.length > 0 && (
+        <div
+          className="surface-card animate-rise space-y-3 p-4"
+          style={{ animationDelay: `${result.suggestions.length * 60}ms` }}
+        >
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            💬 Próximas perguntas
+          </p>
+          <div className="space-y-2.5">
+            {result.perguntas.map((p, i) => (
+              <div key={`${p}-${i}`} className="flex items-start justify-between gap-3">
+                <p className="text-[15px] leading-relaxed">{p}</p>
+                <CopyButton text={p} className="shrink-0" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
