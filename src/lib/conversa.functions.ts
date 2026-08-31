@@ -40,8 +40,11 @@ Responda SEMPRE em JSON válido com este formato:
   "leitura": "string opcional - o que está escrito/acontecendo na conversa",
   "tom": "string opcional - o tom da outra pessoa (interessada, carinhosa, fria, brincalhona, provocante, com saudades...)",
   "significado": "string opcional - 1 a 2 frases explicando o que a mensagem pode significar",
-  "suggestions": [{ "emoji": "❤️", "label": "Romântica", "text": "mensagem pronta para enviar" }]
-}`;
+  "suggestions": [{ "emoji": "❤️", "label": "Romântica", "text": "mensagem pronta para enviar" }],
+  "perguntas": ["3 a 4 perguntas curtas e prontas para enviar, que continuam o papo e fazem a outra pessoa responder"]
+}
+
+SEMPRE preencha "perguntas" com 3 a 4 perguntas naturais, leves e no mesmo clima da conversa (nada de entrevista). Cada pergunta deve poder ser enviada exatamente como está.`;
 
 function userPrompt(data: ConversaInput): string {
   const ctx = `Contexto da personalização:
