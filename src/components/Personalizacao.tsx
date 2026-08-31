@@ -27,7 +27,7 @@ export type Prefs = { persona: string; goal: string; intensity: string };
 export const defaultPrefs: Prefs = {
   persona: PERSONAS[0]!,
   goal: GOALS[2]!,
-  intensity: INTENSITIES[1]!,
+  intensity: INTENSITIES[3]!,
 };
 
 function Row({
