@@ -445,7 +445,7 @@ function Gerador({
 
       {result && (
         <div className="space-y-3">
-          <Sugestoes result={result} />
+          <Sugestoes result={result} platform={platform} />
           <button
             type="button"
             onClick={() => {
