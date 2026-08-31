@@ -9,6 +9,9 @@ const inputSchema = z.object({
   persona: z.string().max(60),
   goal: z.string().max(60),
   intensity: z.string().max(60),
+  platform: z.string().max(60).optional(),
+  platformStyle: z.string().max(200).optional(),
+
 });
 
 export type ConversaInput = z.infer<typeof inputSchema>;
