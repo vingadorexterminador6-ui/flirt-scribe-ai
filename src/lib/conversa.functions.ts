@@ -19,6 +19,7 @@ export type ConversaResult = {
   tom?: string;
   significado?: string;
   suggestions: Suggestion[];
+  perguntas?: string[];
 };
 
 const SYSTEM = `Você é o "Conversa Quente AI", um especialista brasileiro/português em conversas românticas, flerte e relacionamentos.
@@ -39,8 +40,11 @@ Responda SEMPRE em JSON válido com este formato:
   "leitura": "string opcional - o que está escrito/acontecendo na conversa",
   "tom": "string opcional - o tom da outra pessoa (interessada, carinhosa, fria, brincalhona, provocante, com saudades...)",
   "significado": "string opcional - 1 a 2 frases explicando o que a mensagem pode significar",
-  "suggestions": [{ "emoji": "❤️", "label": "Romântica", "text": "mensagem pronta para enviar" }]
-}`;
+  "suggestions": [{ "emoji": "❤️", "label": "Romântica", "text": "mensagem pronta para enviar" }],
+  "perguntas": ["3 a 4 perguntas curtas e prontas para enviar, que continuam o papo e fazem a outra pessoa responder"]
+}
+
+SEMPRE preencha "perguntas" com 3 a 4 perguntas naturais, leves e no mesmo clima da conversa (nada de entrevista). Cada pergunta deve poder ser enviada exatamente como está.`;
 
 function userPrompt(data: ConversaInput): string {
   const ctx = `Contexto da personalização:
@@ -138,6 +142,9 @@ export const gerarRespostas = createServerFn({ method: "POST" })
         ? parsed.suggestions
             .filter((s) => s && typeof s.text === "string")
             .map((s) => ({ emoji: s.emoji ?? "💬", label: s.label ?? "Sugestão", text: s.text }))
+        : [],
+      perguntas: Array.isArray(parsed.perguntas)
+        ? parsed.perguntas.filter((p): p is string => typeof p === "string" && p.trim().length > 0).slice(0, 4)
         : [],
     };
   });
