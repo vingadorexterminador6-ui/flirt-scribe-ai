@@ -89,8 +89,12 @@ export function Sugestoes({ result, platform }: { result: ConversaResult; platfo
             {s.emoji} {s.label}
           </p>
           <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{s.text}</p>
-          <CopyButton text={s.text} />
+          <div className="flex flex-wrap gap-2">
+            <CopyButton text={s.text} />
+            <SendButton text={s.text} platform={platform} />
+          </div>
         </div>
+
       ))}
 
       {result.perguntas && result.perguntas.length > 0 && (
