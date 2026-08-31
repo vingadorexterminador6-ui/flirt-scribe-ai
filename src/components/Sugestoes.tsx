@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Send } from "lucide-react";
 import type { ConversaResult } from "@/lib/conversa.functions";
+import type { Platform } from "@/components/Plataforma";
 import { cn } from "@/lib/utils";
 
 export function CopyButton({ text, className }: { text: string; className?: string }) {
@@ -29,7 +30,40 @@ export function CopyButton({ text, className }: { text: string; className?: stri
   );
 }
 
-export function Sugestoes({ result }: { result: ConversaResult }) {
+export function SendButton({
+  text,
+  platform,
+  className,
+}: {
+  text: string;
+  platform: Platform;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          /* clipboard indisponível */
+        }
+        const url = platform.share ? platform.share(text) : platform.open;
+        window.open(url, "_blank", "noopener,noreferrer");
+      }}
+      className={cn(
+        "cool-gradient inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-primary-foreground transition-all active:scale-95",
+        className,
+      )}
+    >
+      <Send className="size-3.5" />
+      Enviar no {platform.name}
+    </button>
+  );
+}
+
+export function Sugestoes({ result, platform }: { result: ConversaResult; platform: Platform }) {
+
   return (
     <div className="space-y-3">
       {(result.leitura || result.tom || result.significado) && (
