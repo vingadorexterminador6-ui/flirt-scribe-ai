@@ -18,9 +18,11 @@ import {
 } from "lucide-react";
 import { gerarRespostas, type ConversaResult } from "@/lib/conversa.functions";
 import { defaultPrefs, Personalizacao, type Prefs } from "@/components/Personalizacao";
+import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
 import { CopyButton, Sugestoes } from "@/components/Sugestoes";
 import { useHistory } from "@/lib/history";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
