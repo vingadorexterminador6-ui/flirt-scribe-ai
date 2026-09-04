@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -14,8 +14,10 @@ import {
   Star,
   Trash2,
   Users,
+  WifiOff,
   X,
 } from "lucide-react";
+import { canWorkOffline, gerarOffline } from "@/lib/offline";
 import { gerarRespostas, type ConversaResult } from "@/lib/conversa.functions";
 import { defaultPrefs, Personalizacao, type Prefs } from "@/components/Personalizacao";
 import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
@@ -181,6 +183,21 @@ function App() {
   );
 }
 
+function useOnline() {
+  const [online, setOnline] = useState(true);
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine);
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
+  return online;
+}
+
 function TabButton({
   active,
   onClick,
@@ -328,7 +345,10 @@ function Gerador({
   );
   const [result, setResult] = useState<ConversaResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const online = useOnline();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const meta = MENU.find((m) => m.id === screen)!;
@@ -348,40 +368,84 @@ function Gerador({
     reader.readAsDataURL(file);
   };
 
+  const offlineReady = canWorkOffline(screen);
+
   const run = async () => {
     setLoading(true);
     setError(null);
     setResult(null);
-    try {
-      const res = await call({
-        data: {
-          mode: screen,
-          ...prefs,
-          platform: platform.name,
-          platformStyle: platform.style,
-          ...(message.trim() ? { message: message.trim() } : {}),
-          ...(image ? { imageDataUrl: image } : {}),
-          ...(category ? { category } : {}),
-        },
-      });
+    setProgress(0);
+    setElapsed(0);
 
+    const started = Date.now();
+    const tick = setInterval(() => {
+      const secs = (Date.now() - started) / 1000;
+      setElapsed(secs);
+      // avança suavemente até 95% enquanto espera a resposta
+      setProgress((p) => Math.min(95, p + Math.max(1, (95 - p) * 0.12)));
+    }, 120);
+
+    const finish = (res: ConversaResult, offline: boolean) => {
+      setProgress(100);
+      setElapsed((Date.now() - started) / 1000);
       setResult(res);
       if (res.suggestions.length) {
         add({
-          mode: meta.title,
+          mode: offline ? `${meta.title} (offline)` : meta.title,
           title: message.trim() || category || (image ? "Screenshot analisado" : meta.title),
           result: res,
         });
       }
+    };
+
+    try {
+      if (!online && offlineReady) {
+        finish(
+          gerarOffline({
+            mode: screen,
+            persona: prefs.persona,
+            ...(category ? { category } : {}),
+            ...(message.trim() ? { message: message.trim() } : {}),
+          }),
+          true,
+        );
+      } else {
+        const res = await call({
+          data: {
+            mode: screen,
+            ...prefs,
+            platform: platform.name,
+            platformStyle: platform.style,
+            ...(message.trim() ? { message: message.trim() } : {}),
+            ...(image ? { imageDataUrl: image } : {}),
+            ...(category ? { category } : {}),
+          },
+        });
+        finish(res, false);
+      }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Algo correu mal. Tenta de novo.");
+      if (offlineReady) {
+        finish(
+          gerarOffline({
+            mode: screen,
+            persona: prefs.persona,
+            ...(category ? { category } : {}),
+            ...(message.trim() ? { message: message.trim() } : {}),
+          }),
+          true,
+        );
+      } else {
+        setError(e instanceof Error ? e.message : "Algo correu mal. Tenta de novo.");
+      }
     } finally {
+      clearInterval(tick);
       setLoading(false);
     }
   };
 
   const canRun =
     screen === "screenshot" ? !!image : screen === "responder" ? message.trim().length > 1 : true;
+  const blockedOffline = !online && !offlineReady;
 
   return (
     <div className="space-y-4">
@@ -472,16 +536,37 @@ function Gerador({
 
       <PlataformaPicker platform={platform} onSelect={select} />
 
+      {!online && (
+        <p className="flex items-start gap-2 rounded-2xl border border-border bg-secondary/40 p-3 text-xs leading-relaxed text-muted-foreground">
+          <WifiOff className="mt-0.5 size-4 shrink-0 text-primary" />
+          {offlineReady
+            ? "Estás sem internet. Este modo continua a funcionar com as frases guardadas no teu aparelho."
+            : "Estás sem internet. Este modo precisa de ligação porque a IA tem de ler a tua conversa."}
+        </p>
+      )}
+
       <button
         type="button"
-        disabled={!canRun || loading}
+        disabled={!canRun || loading || blockedOffline}
         onClick={run}
-        className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+        className="fusion-gradient heat-glow relative w-full overflow-hidden rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
       >
-
-        {loading ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
-        {loading ? "A IA está pensando..." : "Gerar respostas"}
+        <span
+          className="absolute inset-y-0 left-0 bg-background/25 transition-[width] duration-150"
+          style={{ width: loading ? `${Math.round(progress)}%` : "0%" }}
+          aria-hidden
+        />
+        <span className="relative flex items-center justify-center gap-2">
+          {loading ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
+          {loading ? `${Math.round(progress)}% · ${elapsed.toFixed(1)}s` : "Gerar"}
+        </span>
       </button>
+
+      {!loading && progress === 100 && result && (
+        <p className="text-center text-xs text-muted-foreground">
+          Gerado em {elapsed.toFixed(1)} segundos
+        </p>
+      )}
 
       {error && (
         <p className="rounded-2xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive-foreground">
