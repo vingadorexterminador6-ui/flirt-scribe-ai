@@ -351,40 +351,84 @@ function Gerador({
     reader.readAsDataURL(file);
   };
 
+  const offlineReady = canWorkOffline(screen);
+
   const run = async () => {
     setLoading(true);
     setError(null);
     setResult(null);
-    try {
-      const res = await call({
-        data: {
-          mode: screen,
-          ...prefs,
-          platform: platform.name,
-          platformStyle: platform.style,
-          ...(message.trim() ? { message: message.trim() } : {}),
-          ...(image ? { imageDataUrl: image } : {}),
-          ...(category ? { category } : {}),
-        },
-      });
+    setProgress(0);
+    setElapsed(0);
 
+    const started = Date.now();
+    const tick = setInterval(() => {
+      const secs = (Date.now() - started) / 1000;
+      setElapsed(secs);
+      // avança suavemente até 95% enquanto espera a resposta
+      setProgress((p) => Math.min(95, p + Math.max(1, (95 - p) * 0.12)));
+    }, 120);
+
+    const finish = (res: ConversaResult, offline: boolean) => {
+      setProgress(100);
+      setElapsed((Date.now() - started) / 1000);
       setResult(res);
       if (res.suggestions.length) {
         add({
-          mode: meta.title,
+          mode: offline ? `${meta.title} (offline)` : meta.title,
           title: message.trim() || category || (image ? "Screenshot analisado" : meta.title),
           result: res,
         });
       }
+    };
+
+    try {
+      if (!online && offlineReady) {
+        finish(
+          gerarOffline({
+            mode: screen,
+            persona: prefs.persona,
+            ...(category ? { category } : {}),
+            ...(message.trim() ? { message: message.trim() } : {}),
+          }),
+          true,
+        );
+      } else {
+        const res = await call({
+          data: {
+            mode: screen,
+            ...prefs,
+            platform: platform.name,
+            platformStyle: platform.style,
+            ...(message.trim() ? { message: message.trim() } : {}),
+            ...(image ? { imageDataUrl: image } : {}),
+            ...(category ? { category } : {}),
+          },
+        });
+        finish(res, false);
+      }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Algo correu mal. Tenta de novo.");
+      if (offlineReady) {
+        finish(
+          gerarOffline({
+            mode: screen,
+            persona: prefs.persona,
+            ...(category ? { category } : {}),
+            ...(message.trim() ? { message: message.trim() } : {}),
+          }),
+          true,
+        );
+      } else {
+        setError(e instanceof Error ? e.message : "Algo correu mal. Tenta de novo.");
+      }
     } finally {
+      clearInterval(tick);
       setLoading(false);
     }
   };
 
   const canRun =
     screen === "screenshot" ? !!image : screen === "responder" ? message.trim().length > 1 : true;
+  const blockedOffline = !online && !offlineReady;
 
   return (
     <div className="space-y-4">
