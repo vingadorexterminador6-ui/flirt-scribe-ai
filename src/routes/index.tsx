@@ -72,6 +72,13 @@ const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: 
     icon: MessageCircleHeart,
   },
   {
+    id: "conhecer",
+    emoji: "🥂",
+    title: "Conheci Alguém Novo",
+    subtitle: "Papos leves, engraçados e que chamam atenção",
+    icon: Sparkles,
+  },
+  {
     id: "conquista",
     emoji: "💘",
     title: "Modo Conquista",
@@ -92,6 +99,21 @@ const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: 
     subtitle: "Frases que criam tensão e expectativa",
     icon: Flame,
   },
+];
+
+const CONHECER = [
+  "Puxar papo do nada",
+  "Diversão",
+  "Papos leves",
+  "Chamar muita atenção",
+  "Quebrar o gelo com humor",
+  "Zoeira e provocação",
+  "Descobrir os gostos dela(e)",
+  "Papo sensual",
+  "Criar tensão no primeiro papo",
+  "Depois do match",
+  "Continuar o papo que morreu",
+  "Chamar para sair",
 ];
 
 const CONQUISTA = [
