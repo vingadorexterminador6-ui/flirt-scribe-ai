@@ -332,7 +332,14 @@ function Gerador({
   const fileRef = useRef<HTMLInputElement>(null);
 
   const meta = MENU.find((m) => m.id === screen)!;
-  const categories = screen === "conquista" ? CONQUISTA : screen === "namorados" ? NAMORADOS : [];
+  const categories =
+    screen === "conquista"
+      ? CONQUISTA
+      : screen === "namorados"
+        ? NAMORADOS
+        : screen === "conhecer"
+          ? CONHECER
+          : [];
 
   const onFile = (file: File | undefined) => {
     if (!file) return;
