@@ -318,7 +318,13 @@ function Gerador({
 
   const [image, setImage] = useState<string | null>(null);
   const [category, setCategory] = useState(
-    screen === "conquista" ? CONQUISTA[0]! : screen === "namorados" ? NAMORADOS[0]! : "",
+    screen === "conquista"
+      ? CONQUISTA[0]!
+      : screen === "namorados"
+        ? NAMORADOS[0]!
+        : screen === "conhecer"
+          ? CONHECER[0]!
+          : "",
   );
   const [result, setResult] = useState<ConversaResult | null>(null);
   const [loading, setLoading] = useState(false);
