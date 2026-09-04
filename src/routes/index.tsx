@@ -46,7 +46,15 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type Screen = "home" | "screenshot" | "responder" | "conquista" | "namorados" | "pensando" | "historico";
+type Screen =
+  | "home"
+  | "screenshot"
+  | "responder"
+  | "conhecer"
+  | "conquista"
+  | "namorados"
+  | "pensando"
+  | "historico";
 
 const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: typeof Camera }[] = [
   {
