@@ -519,16 +519,37 @@ function Gerador({
 
       <PlataformaPicker platform={platform} onSelect={select} />
 
+      {!online && (
+        <p className="flex items-start gap-2 rounded-2xl border border-border bg-secondary/40 p-3 text-xs leading-relaxed text-muted-foreground">
+          <WifiOff className="mt-0.5 size-4 shrink-0 text-primary" />
+          {offlineReady
+            ? "Estás sem internet. Este modo continua a funcionar com as frases guardadas no teu aparelho."
+            : "Estás sem internet. Este modo precisa de ligação porque a IA tem de ler a tua conversa."}
+        </p>
+      )}
+
       <button
         type="button"
-        disabled={!canRun || loading}
+        disabled={!canRun || loading || blockedOffline}
         onClick={run}
-        className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+        className="fusion-gradient heat-glow relative w-full overflow-hidden rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
       >
-
-        {loading ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
-        {loading ? "A IA está pensando..." : "Gerar respostas"}
+        <span
+          className="absolute inset-y-0 left-0 bg-background/25 transition-[width] duration-150"
+          style={{ width: loading ? `${Math.round(progress)}%` : "0%" }}
+          aria-hidden
+        />
+        <span className="relative flex items-center justify-center gap-2">
+          {loading ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
+          {loading ? `${Math.round(progress)}% · ${elapsed.toFixed(1)}s` : "Gerar"}
+        </span>
       </button>
+
+      {!loading && progress === 100 && result && (
+        <p className="text-center text-xs text-muted-foreground">
+          Gerado em {elapsed.toFixed(1)} segundos
+        </p>
+      )}
 
       {error && (
         <p className="rounded-2xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive-foreground">
