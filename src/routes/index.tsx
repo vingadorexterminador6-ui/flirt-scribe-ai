@@ -46,7 +46,15 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type Screen = "home" | "screenshot" | "responder" | "conquista" | "namorados" | "pensando" | "historico";
+type Screen =
+  | "home"
+  | "screenshot"
+  | "responder"
+  | "conhecer"
+  | "conquista"
+  | "namorados"
+  | "pensando"
+  | "historico";
 
 const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: typeof Camera }[] = [
   {
@@ -62,6 +70,13 @@ const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: 
     title: "O que Respondo?",
     subtitle: "Cole a mensagem dela(e) e receba opções",
     icon: MessageCircleHeart,
+  },
+  {
+    id: "conhecer",
+    emoji: "🥂",
+    title: "Conheci Alguém Novo",
+    subtitle: "Papos leves, engraçados e que chamam atenção",
+    icon: Sparkles,
   },
   {
     id: "conquista",
@@ -84,6 +99,21 @@ const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: 
     subtitle: "Frases que criam tensão e expectativa",
     icon: Flame,
   },
+];
+
+const CONHECER = [
+  "Puxar papo do nada",
+  "Diversão",
+  "Papos leves",
+  "Chamar muita atenção",
+  "Quebrar o gelo com humor",
+  "Zoeira e provocação",
+  "Descobrir os gostos dela(e)",
+  "Papo sensual",
+  "Criar tensão no primeiro papo",
+  "Depois do match",
+  "Continuar o papo que morreu",
+  "Chamar para sair",
 ];
 
 const CONQUISTA = [
@@ -288,7 +318,13 @@ function Gerador({
 
   const [image, setImage] = useState<string | null>(null);
   const [category, setCategory] = useState(
-    screen === "conquista" ? CONQUISTA[0]! : screen === "namorados" ? NAMORADOS[0]! : "",
+    screen === "conquista"
+      ? CONQUISTA[0]!
+      : screen === "namorados"
+        ? NAMORADOS[0]!
+        : screen === "conhecer"
+          ? CONHECER[0]!
+          : "",
   );
   const [result, setResult] = useState<ConversaResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -296,7 +332,14 @@ function Gerador({
   const fileRef = useRef<HTMLInputElement>(null);
 
   const meta = MENU.find((m) => m.id === screen)!;
-  const categories = screen === "conquista" ? CONQUISTA : screen === "namorados" ? NAMORADOS : [];
+  const categories =
+    screen === "conquista"
+      ? CONQUISTA
+      : screen === "namorados"
+        ? NAMORADOS
+        : screen === "conhecer"
+          ? CONHECER
+          : [];
 
   const onFile = (file: File | undefined) => {
     if (!file) return;

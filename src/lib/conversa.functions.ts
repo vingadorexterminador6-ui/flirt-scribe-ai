@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const inputSchema = z.object({
-  mode: z.enum(["screenshot", "responder", "conquista", "namorados", "pensando"]),
+  mode: z.enum(["screenshot", "responder", "conquista", "namorados", "pensando", "conhecer"]),
   message: z.string().max(4000).optional(),
   imageDataUrl: z.string().max(12_000_000).optional(),
   category: z.string().max(120).optional(),
@@ -96,6 +96,19 @@ Gere 5 mensagens diferentes para enviar ao parceiro(a), variando o tom dentro da
 Modo "Deixa Pensando". Gere 5 frases ultra provocantes, diretas e confiantes que criem desejo intenso, curiosidade e tensão — a outra pessoa deve ficar pensando nisso o dia todo. Ousado, mas sem vulgaridade e sem descrever atos sexuais.
 ${data.message ? `Contexto do usuário: "${data.message}"` : ""}
 Use "label" curto (ex.: Mistério, Provocação, Confiança). Deixe "leitura", "tom" e "significado" vazios.`;
+    case "conhecer":
+      return `${ctx}
+
+Modo "Conhecendo Alguém Novo" — a pessoa acabou de conhecer alguém (match, festa, trabalho, amigo em comum, DM).
+Categoria escolhida: "${data.category}".
+${data.message ? `Detalhe extra do usuário: "${data.message}"` : ""}
+Gere 5 mensagens para puxar papo com alguém novo. Regras específicas deste modo:
+- Devem ser DIVERTIDAS e ENGRAÇADAS, papo leve, nada de interrogatório nem "oi, tudo bem?".
+- Cada mensagem deve CHAMAR MUITA ATENÇÃO logo na primeira linha (algo inesperado, brincalhão ou ousado).
+- Devem sempre terminar puxando o papo (uma provocação, um desafio, uma pergunta divertida) para a pessoa querer responder.
+- Misture o clima: leves e engraçadas, mas com pegada MUITO SENSUAL e provocante, criando desejo e tensão por insinuação.
+Use "label" curto descrevendo o estilo (ex.: Engraçada, Papo leve, Chama atenção, Provocante, Sensual).
+Preencha "perguntas" com 3 a 4 puxadas de papo curtas e divertidas. Deixe "leitura", "tom" e "significado" vazios.`;
   }
 }
 
