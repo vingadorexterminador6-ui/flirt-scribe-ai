@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -14,8 +14,10 @@ import {
   Star,
   Trash2,
   Users,
+  WifiOff,
   X,
 } from "lucide-react";
+import { canWorkOffline, gerarOffline } from "@/lib/offline";
 import { gerarRespostas, type ConversaResult } from "@/lib/conversa.functions";
 import { defaultPrefs, Personalizacao, type Prefs } from "@/components/Personalizacao";
 import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
