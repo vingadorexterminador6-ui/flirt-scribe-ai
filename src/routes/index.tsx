@@ -328,7 +328,10 @@ function Gerador({
   );
   const [result, setResult] = useState<ConversaResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const online = useOnline();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const meta = MENU.find((m) => m.id === screen)!;
