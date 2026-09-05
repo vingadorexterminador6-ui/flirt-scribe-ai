@@ -318,64 +318,64 @@ function TabButton({
 
 function Home({ onOpen }: { onOpen: (s: Screen) => void }) {
   return (
-    <div className="animate-rise space-y-6">
-      <header className="space-y-3 pt-6 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground shadow-sm">
-          <Flame className="size-3.5 text-primary" /> Conversa Quente AI
-          <span className="size-1 rounded-full bg-azul" />
-          <span className="cool-text font-semibold">sincroniza com os teus apps</span>
-        </span>
-        <h1 className="text-[2rem] font-bold leading-tight tracking-tight">
-          Nunca mais fique sem saber <span className="fusion-text">o que responder.</span>
-        </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Envie a mensagem ou screenshot. A IA entende o contexto, adapta ao app que você usa e cria
-          a resposta perfeita.
-        </p>
-      </header>
-
-
+    <div className="animate-rise space-y-6 pt-2">
       <div className="space-y-3">
-        {MENU.map((m, i) => (
-          <button
-            key={m.id}
-            type="button"
-            onClick={() => onOpen(m.id)}
-            className={cn(
-              "surface-card animate-rise flex w-full items-center gap-4 p-4 text-left transition-all duration-200 active:scale-[0.98]",
-              m.id === "screenshot" && "heat-gradient heat-glow border-transparent",
-            )}
-            style={{ animationDelay: `${i * 60}ms` }}
-          >
-            <span
+        {MENU.map((m, i) => {
+          const azulCard = i % 2 === 1;
+          return (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => onOpen(m.id)}
               className={cn(
-                "grid size-12 shrink-0 place-items-center rounded-2xl text-xl",
-                m.id === "screenshot" ? "bg-background/25" : "bg-secondary/70",
+                "surface-card animate-rise relative flex w-full items-center gap-4 overflow-hidden p-4 text-left transition-all duration-200 active:scale-[0.98]",
+                m.id === "screenshot" && "fusion-gradient heat-glow border-transparent",
               )}
+              style={{ animationDelay: `${i * 60}ms` }}
             >
-              {m.emoji}
-            </span>
-            <span className="min-w-0 flex-1">
+              {m.id !== "screenshot" && (
+                <span
+                  className={cn(
+                    "absolute inset-y-0 left-0 w-1.5",
+                    azulCard ? "cool-gradient" : "heat-gradient",
+                  )}
+                />
+              )}
               <span
                 className={cn(
-                  "block text-base font-semibold",
-                  m.id === "screenshot" && "text-primary-foreground",
+                  "grid size-12 shrink-0 place-items-center rounded-2xl text-xl",
+                  m.id === "screenshot"
+                    ? "bg-background/25"
+                    : azulCard
+                      ? "bg-azul/15 ring-1 ring-azul/40"
+                      : "bg-primary/15 ring-1 ring-primary/40",
                 )}
               >
-                {m.title}
+                {m.emoji}
               </span>
-              <span
-                className={cn(
-                  "block text-sm",
-                  m.id === "screenshot" ? "text-primary-foreground/80" : "text-muted-foreground",
-                )}
-              >
-                {m.subtitle}
+              <span className="min-w-0 flex-1">
+                <span
+                  className={cn(
+                    "block text-base font-semibold",
+                    m.id === "screenshot" && "text-primary-foreground",
+                  )}
+                >
+                  {m.title}
+                </span>
+                <span
+                  className={cn(
+                    "block text-sm",
+                    m.id === "screenshot" ? "text-primary-foreground/80" : "text-muted-foreground",
+                  )}
+                >
+                  {m.subtitle}
+                </span>
               </span>
-            </span>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
+
 
       <PrivacyNote />
     </div>
