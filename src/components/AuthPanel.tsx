@@ -45,11 +45,11 @@ export function AuthPanel({ onEnter }: { onEnter: () => void }) {
           ? "Espera uns segundos e toca em entrar outra vez."
           : /invalid login/i.test(msg)
             ? "E-mail ou palavra-passe incorretos."
-          : /already registered|already exists/i.test(msg)
-            ? "Esta conta já existe. Entra em vez de criar."
-            : /password/i.test(msg)
-              ? "A palavra-passe precisa de pelo menos 6 caracteres."
-              : msg,
+            : /already registered|already exists/i.test(msg)
+              ? "Esta conta já existe. Entra em vez de criar."
+              : /password/i.test(msg)
+                ? "A palavra-passe precisa de pelo menos 6 caracteres."
+                : msg,
       );
     } finally {
       setLoading(false);
