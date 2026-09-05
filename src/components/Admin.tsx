@@ -57,6 +57,78 @@ export function ManutencaoScreen({ mensagem }: { mensagem: string }) {
   );
 }
 
+/** Pede o código de administrador antes de abrir o painel. Não exige conta. */
+export function AdminGate({ onBack }: { onBack: () => void }) {
+  const entrar = useServerFn(entrarAdmin);
+  const [codigo, setCodigo] = useState("");
+  const [ok, setOk] = useState<string | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  if (ok) return <AdminPanel codigo={ok} onBack={onBack} />;
+
+  const validar = async () => {
+    setBusy(true);
+    setErro(null);
+    try {
+      await entrar({ data: { codigo } });
+      setOk(codigo);
+    } catch {
+      setErro("Código incorreto.");
+    }
+    setBusy(false);
+  };
+
+  return (
+    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6">
+      <div className="surface-card animate-rise space-y-5 p-7">
+        <div className="space-y-1 text-center">
+          <div className="mx-auto grid size-14 place-items-center rounded-full bg-secondary/60">
+            <ShieldCheck className="size-7 text-primary" />
+          </div>
+          <h1 className="text-xl font-bold">Área de administrador</h1>
+          <p className="text-sm text-muted-foreground">
+            Introduz o código de administrador para entrar. Não é preciso conta.
+          </p>
+        </div>
+
+        <input
+          type="password"
+          value={codigo}
+          onChange={(e) => setCodigo(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && codigo && void validar()}
+          placeholder="Código de administrador"
+          className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+        />
+
+        {erro && (
+          <p className="rounded-2xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+            {erro}
+          </p>
+        )}
+
+        <button
+          type="button"
+          disabled={!codigo || busy}
+          onClick={() => void validar()}
+          className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+        >
+          {busy ? <Loader2 className="size-5 animate-spin" /> : <ShieldCheck className="size-5" />}
+          Entrar
+        </button>
+
+        <button
+          type="button"
+          onClick={onBack}
+          className="w-full text-center text-sm text-muted-foreground hover:text-foreground"
+        >
+          Voltar
+        </button>
+      </div>
+    </main>
+  );
+}
+
 export function AdminPanel({ onBack, codigo }: { onBack: () => void; codigo: string }) {
   const { isAdmin, status, loading, refresh } = useAdmin();
   const guardarEstado = useServerFn(definirEstadoApp);
