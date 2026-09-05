@@ -10,6 +10,7 @@ import {
   Loader2,
   MessageCircleHeart,
   Shield,
+  ShieldCheck,
   Sparkles,
   Star,
   Trash2,
@@ -24,6 +25,7 @@ import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
 import { CopyButton, Sugestoes } from "@/components/Sugestoes";
 import { useHistory } from "@/lib/history";
 import { AuthPanel } from "@/components/AuthPanel";
+import { AdminPanel, ManutencaoScreen, useAdmin } from "@/components/Admin";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -58,6 +60,7 @@ type Screen =
   | "conquista"
   | "namorados"
   | "pensando"
+  | "admin"
   | "historico";
 
 const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: typeof Camera }[] = [
@@ -155,14 +158,19 @@ function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
   const [session, setSession] = useState<boolean | null>(null);
+  const { isAdmin, status, loading: adminLoading, refresh } = useAdmin();
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(!!s));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      setSession(!!s);
+      void refresh();
+    });
     supabase.auth.getSession().then(({ data }) => setSession(!!data.session));
     return () => sub.subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (session === null) {
+  if (session === null || adminLoading) {
     return (
       <main className="grid min-h-screen place-items-center">
         <Loader2 className="size-6 animate-spin text-primary" />
@@ -172,12 +180,16 @@ function App() {
 
   if (!session) return <AuthPanel onEnter={() => setSession(true)} />;
 
+  if (status && !status.ativo && !isAdmin) return <ManutencaoScreen mensagem={status.mensagem} />;
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 pb-28 pt-6">
       {screen === "home" ? (
         <Home onOpen={setScreen} />
       ) : screen === "historico" ? (
         <Historico onBack={() => setScreen("home")} />
+      ) : screen === "admin" ? (
+        <AdminPanel onBack={() => setScreen("home")} />
       ) : (
         <Gerador key={screen} screen={screen} prefs={prefs} setPrefs={setPrefs} onBack={() => setScreen("home")} />
       )}
@@ -185,7 +197,7 @@ function App() {
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-md items-center justify-around px-4 py-3">
           <TabButton
-            active={screen !== "historico"}
+            active={screen !== "historico" && screen !== "admin"}
             onClick={() => setScreen("home")}
             icon={<Heart className="size-5" />}
             label="Início"
@@ -196,11 +208,20 @@ function App() {
             icon={<Clock className="size-5" />}
             label="Histórico"
           />
+          {isAdmin && (
+            <TabButton
+              active={screen === "admin"}
+              onClick={() => setScreen("admin")}
+              icon={<ShieldCheck className="size-5" />}
+              label="Admin"
+            />
+          )}
         </div>
       </nav>
     </main>
   );
 }
+
 
 function useOnline() {
   const [online, setOnline] = useState(true);
