@@ -171,7 +171,7 @@ function App() {
   const [session, setSession] = useState<boolean | null>(null);
   const [adminAberto, setAdminAberto] = useState(false);
   const [adminCodigo, setAdminCodigo] = useState<string | null>(null);
-  const [versaoVista, setVersaoVista] = useState(() => (isAppInstalado() ? lerVersaoVista() : 0));
+  const [versaoVista, setVersaoVista] = useState(() => lerVersaoVista());
   const { isAdmin, status, loading: adminLoading, refresh } = useAdmin();
   const admin = isAdmin || !!adminCodigo;
 
