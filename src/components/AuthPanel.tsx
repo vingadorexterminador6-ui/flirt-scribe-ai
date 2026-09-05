@@ -41,8 +41,10 @@ export function AuthPanel({ onEnter }: { onEnter: () => void }) {
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Algo correu mal.";
       setError(
-        /invalid login/i.test(msg)
-          ? "E-mail ou palavra-passe incorretos."
+        /not confirmed|confirm/i.test(msg)
+          ? "Espera uns segundos e toca em entrar outra vez."
+          : /invalid login/i.test(msg)
+            ? "E-mail ou palavra-passe incorretos."
           : /already registered|already exists/i.test(msg)
             ? "Esta conta já existe. Entra em vez de criar."
             : /password/i.test(msg)
