@@ -155,12 +155,12 @@ export function AdminPanel({ onBack, codigo }: { onBack: () => void; codigo: str
         </button>
       </div>
 
-      <Utilizadores />
+      <Utilizadores codigo={codigo} />
     </div>
   );
 }
 
-function Utilizadores() {
+function Utilizadores({ codigo }: { codigo: string }) {
   const listar = useServerFn(listarUtilizadores);
   const confirmar = useServerFn(confirmarUtilizador);
   const definir = useServerFn(definirPalavraPasse);
@@ -175,7 +175,7 @@ function Utilizadores() {
   const carregar = async () => {
     setErro(null);
     try {
-      setUsers(await listar({ data: {} as never }));
+      setUsers(await listar({ data: { codigo } }));
     } catch {
       setErro("Não foi possível carregar as contas.");
       setUsers([]);
@@ -255,7 +255,7 @@ function Utilizadores() {
                     type="button"
                     disabled={busy === u.id}
                     onClick={() =>
-                      void acao(u.id, () => confirmar({ data: { userId: u.id } }), "Conta verificada.")
+                      void acao(u.id, () => confirmar({ data: { codigo, userId: u.id } }), "Conta verificada.")
                     }
                     className="rounded-xl border border-border bg-secondary/40 px-3 py-2 text-xs font-semibold disabled:opacity-50"
                   >
@@ -288,7 +288,7 @@ function Utilizadores() {
                     onClick={() =>
                       void acao(
                         u.id,
-                        () => definir({ data: { userId: u.id, password: nova } }),
+                        () => definir({ data: { codigo, userId: u.id, password: nova } }),
                         "Palavra-passe alterada. Partilha-a com a pessoa.",
                       ).then(() => setOpenId(null))
                     }
