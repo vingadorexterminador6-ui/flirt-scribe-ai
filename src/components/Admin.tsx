@@ -56,8 +56,9 @@ export function ManutencaoScreen({ mensagem }: { mensagem: string }) {
   );
 }
 
-export function AdminPanel({ onBack }: { onBack: () => void }) {
+export function AdminPanel({ onBack, codigo }: { onBack: () => void; codigo: string }) {
   const { isAdmin, status, loading, refresh } = useAdmin();
+  const guardarEstado = useServerFn(definirEstadoApp);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [erro, setErro] = useState<string | null>(null);
@@ -69,12 +70,12 @@ export function AdminPanel({ onBack }: { onBack: () => void }) {
   const salvar = async (ativo: boolean) => {
     setSaving(true);
     setErro(null);
-    const { error } = await supabase
-      .from("app_status")
-      .update({ ativo, mensagem: msg, updated_at: new Date().toISOString() })
-      .eq("id", true);
-    if (error) setErro("Não foi possível guardar. Tenta de novo.");
-    else await refresh();
+    try {
+      await guardarEstado({ data: { codigo, ativo, mensagem: msg } });
+      await refresh();
+    } catch {
+      setErro("Não foi possível guardar. Tenta de novo.");
+    }
     setSaving(false);
   };
 
@@ -86,7 +87,7 @@ export function AdminPanel({ onBack }: { onBack: () => void }) {
     );
   }
 
-  if (!isAdmin) {
+  if (!codigo && !isAdmin) {
     return (
       <div className="animate-rise space-y-4">
         <BackBar onBack={onBack} />
