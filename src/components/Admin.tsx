@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Loader2, Power, ShieldCheck } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowLeft, KeyRound, Loader2, Power, ShieldCheck, Users } from "lucide-react";
+import {
+  confirmarUtilizador,
+  definirPalavraPasse,
+  listarUtilizadores,
+  type AdminUser,
+} from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
