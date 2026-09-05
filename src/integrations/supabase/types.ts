@@ -20,18 +20,21 @@ export type Database = {
           id: boolean
           mensagem: string
           updated_at: string
+          versao: number
         }
         Insert: {
           ativo?: boolean
           id?: boolean
           mensagem?: string
           updated_at?: string
+          versao?: number
         }
         Update: {
           ativo?: boolean
           id?: boolean
           mensagem?: string
           updated_at?: string
+          versao?: number
         }
         Relationships: []
       }
