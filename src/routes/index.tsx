@@ -8,6 +8,7 @@ import {
   Flame,
   Heart,
   Loader2,
+  LogOut,
   MessageCircleHeart,
   Shield,
   ShieldCheck,
@@ -216,6 +217,16 @@ function App() {
               label="Admin"
             />
           )}
+          <TabButton
+            active={false}
+            onClick={async () => {
+              await supabase.auth.signOut();
+              setScreen("home");
+              setSession(false);
+            }}
+            icon={<LogOut className="size-5" />}
+            label="Sair"
+          />
         </div>
       </nav>
     </main>
