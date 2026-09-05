@@ -568,23 +568,26 @@ function Gerador({
         type="button"
         disabled={!canRun || loading || blockedOffline}
         onClick={run}
-        className="fusion-gradient heat-glow relative w-full overflow-hidden rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+        className="fusion-gradient heat-glow w-full rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
       >
-        <span
-          className="absolute inset-y-0 left-0 bg-background/25 transition-[width] duration-150"
-          style={{ width: loading ? `${Math.round(progress)}%` : "0%" }}
-          aria-hidden
-        />
-        <span className="relative flex items-center justify-center gap-2">
+        <span className="flex items-center justify-center gap-2">
           {loading ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
-          {loading ? `${Math.round(progress)}% · ${elapsed.toFixed(1)}s` : "Gerar"}
+          Gerar
         </span>
       </button>
 
-      {!loading && progress === 100 && result && (
-        <p className="text-center text-xs text-muted-foreground">
-          Gerado em {elapsed.toFixed(1)} segundos
-        </p>
+      {loading && (
+        <div className="space-y-1.5">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-secondary/60">
+            <div
+              className="fusion-gradient h-full rounded-full transition-[width] duration-150"
+              style={{ width: `${Math.round(progress)}%` }}
+            />
+          </div>
+          <p className="text-center text-xs font-medium text-muted-foreground">
+            {Math.round(progress)}%
+          </p>
+        </div>
       )}
 
       {error && (
