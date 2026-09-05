@@ -110,6 +110,45 @@ export function AuthPanel({ onEnter }: { onEnter: () => void }) {
     onEnter();
   };
 
+  if (recovery) {
+    return (
+      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-10">
+        <div className="surface-card animate-rise space-y-5 p-7">
+          <div className="mx-auto grid size-16 place-items-center rounded-full bg-secondary/60">
+            <KeyRound className="size-8 text-primary" />
+          </div>
+          <div className="space-y-2 text-center">
+            <h1 className="text-2xl font-bold">Nova palavra-passe</h1>
+            <p className="text-sm text-muted-foreground">Escolhe uma nova e entra logo a seguir.</p>
+          </div>
+          <Field icon={<Lock className="size-4" />}>
+            <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              autoComplete="new-password"
+              placeholder="nova palavra-passe"
+              className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground"
+            />
+          </Field>
+          {error && (
+            <p className="rounded-2xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              {error}
+            </p>
+          )}
+          <button
+            type="button"
+            disabled={loading || password.length < 6}
+            onClick={guardarNovaPass}
+            className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+          >
+            {loading && <Loader2 className="size-5 animate-spin" />} Guardar e entrar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (created) {
     return (
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-10">
