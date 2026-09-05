@@ -23,6 +23,8 @@ import { defaultPrefs, Personalizacao, type Prefs } from "@/components/Personali
 import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
 import { CopyButton, Sugestoes } from "@/components/Sugestoes";
 import { useHistory } from "@/lib/history";
+import { AuthPanel } from "@/components/AuthPanel";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 
@@ -152,6 +154,23 @@ const NAMORADOS = [
 function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
+  const [session, setSession] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(!!s));
+    supabase.auth.getSession().then(({ data }) => setSession(!!data.session));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  if (session === null) {
+    return (
+      <main className="grid min-h-screen place-items-center">
+        <Loader2 className="size-6 animate-spin text-primary" />
+      </main>
+    );
+  }
+
+  if (!session) return <AuthPanel onEnter={() => setSession(true)} />;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 pb-28 pt-6">
