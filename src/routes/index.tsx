@@ -177,6 +177,13 @@ function App() {
 
   useEffect(() => {
     setAdminCodigo(lerAdminApp());
+    // Reage em tempo real quando o administrador liga/desliga o aplicativo.
+    const canal = supabase
+      .channel("app_status")
+      .on("postgres_changes", { event: "*", schema: "public", table: "app_status" }, () => {
+        void refresh();
+      })
+      .subscribe();
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(!!s);
       if (s) marcarSessaoNavegador();
@@ -193,7 +200,10 @@ function App() {
       if (data.session) marcarSessaoNavegador();
       setSession(!!data.session);
     })();
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      sub.subscription.unsubscribe();
+      void supabase.removeChannel(canal);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
