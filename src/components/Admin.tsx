@@ -57,7 +57,7 @@ export function ManutencaoScreen({ mensagem }: { mensagem: string }) {
   );
 }
 
-/** Mostrada só no aplicativo instalado quando existe uma versão nova. */
+/** Mostrada quando o administrador reativa o app e a versão sobe. */
 export function NovaVersaoScreen({ onBaixar }: { onBaixar: () => void }) {
   return (
     <main className="mx-auto grid min-h-screen w-full max-w-md place-items-center px-6 text-center">
@@ -65,16 +65,16 @@ export function NovaVersaoScreen({ onBaixar }: { onBaixar: () => void }) {
         <div className="mx-auto grid size-16 place-items-center rounded-full bg-secondary/60">
           <Download className="size-8 text-primary" />
         </div>
-        <h1 className="text-2xl font-bold">Nova versão disponível</h1>
+        <h1 className="text-2xl font-bold">Nova atualização disponível</h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          O Conversa Quente AI foi atualizado. Baixa a nova versão para continuar com todas as novidades.
+          O Conversa Quente AI foi atualizado. Baixa a nova atualização para continuar com todas as novidades.
         </p>
         <button
           type="button"
           onClick={onBaixar}
           className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98]"
         >
-          <Download className="size-5" /> Baixar nova versão
+          <Download className="size-5" /> Baixar nova atualização
         </button>
       </div>
     </main>
