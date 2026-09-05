@@ -24,12 +24,24 @@ export const definirEstadoApp = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     assertCodigo(data.codigo);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Ao voltar a ativar, sobe a versão: o app instalado vai pedir para baixar a nova versão.
+    const { data: atual } = await supabaseAdmin
+      .from("app_status")
+      .select("versao")
+      .eq("id", true)
+      .single();
+    const versao = (atual?.versao ?? 1) + (data.ativo ? 1 : 0);
     const { error } = await supabaseAdmin
       .from("app_status")
-      .update({ ativo: data.ativo, mensagem: data.mensagem, updated_at: new Date().toISOString() })
+      .update({
+        ativo: data.ativo,
+        mensagem: data.mensagem,
+        versao,
+        updated_at: new Date().toISOString(),
+      })
       .eq("id", true);
     if (error) throw new Error(error.message);
-    return { ok: true };
+    return { ok: true, versao };
   });
 
 export type AdminUser = {

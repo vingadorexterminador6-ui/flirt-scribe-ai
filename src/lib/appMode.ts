@@ -66,3 +66,22 @@ export function limparAdminApp() {
     /* ignora */
   }
 }
+
+const CHAVE_VERSAO = "cq_versao_vista";
+
+/** Última versão que este aplicativo instalado já viu. */
+export function lerVersaoVista() {
+  try {
+    return Number(localStorage.getItem(CHAVE_VERSAO) ?? "0");
+  } catch {
+    return 0;
+  }
+}
+
+export function guardarVersaoVista(versao: number) {
+  try {
+    localStorage.setItem(CHAVE_VERSAO, String(versao));
+  } catch {
+    /* ignora */
+  }
+}
