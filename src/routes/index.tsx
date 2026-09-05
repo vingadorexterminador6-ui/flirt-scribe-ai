@@ -553,34 +553,74 @@ function Gerador({
             onChange={(e) => onFile(e.target.files?.[0])}
           />
           {image ? (
-            <div className="surface-card relative overflow-hidden p-2">
-              <img src={image} alt="Screenshot da conversa" className="w-full rounded-xl" />
-              <button
-                type="button"
-                onClick={() => {
-                  setImage(null);
-                  setResult(null);
-                  if (fileRef.current) fileRef.current.value = "";
-                }}
-                className="absolute right-4 top-4 grid size-9 place-items-center rounded-full bg-background/80 backdrop-blur"
-                aria-label="Apagar imagem"
-              >
-                <X className="size-4" />
-              </button>
+            <div className="surface-card space-y-3 overflow-hidden p-3">
+              <div className="relative overflow-hidden rounded-xl border border-border">
+                <img src={image} alt="Screenshot da conversa" className="w-full" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImage(null);
+                    setResult(null);
+                    if (fileRef.current) fileRef.current.value = "";
+                  }}
+                  className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-background/80 backdrop-blur"
+                  aria-label="Apagar imagem"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="inline-flex items-center gap-2 text-xs font-medium text-azul">
+                  <Shield className="size-3.5" /> Imagem pronta para análise
+                </span>
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  className="rounded-full border border-border bg-secondary/50 px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-secondary"
+                >
+                  Trocar imagem
+                </button>
+              </div>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="surface-card flex w-full flex-col items-center gap-2 border-dashed p-8 text-center transition-colors hover:bg-secondary/30"
-            >
-              <Camera className="size-7 text-primary" />
-              <span className="font-semibold">Carregar screenshot</span>
-              <span className="text-sm text-muted-foreground">
-                Print do WhatsApp, Instagram ou Messenger
-              </span>
-            </button>
+            <div className="surface-card relative overflow-hidden p-5">
+              <span className="fusion-gradient absolute inset-x-0 top-0 h-1" />
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border/80 bg-secondary/20 px-4 py-7 text-center">
+                <span className="grid size-14 place-items-center rounded-2xl bg-primary/15 ring-1 ring-primary/40">
+                  <Camera className="size-7 text-primary" />
+                </span>
+                <span className="text-base font-semibold">Envie o print da conversa</span>
+                <span className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+                  WhatsApp, Instagram, Telegram, Messenger ou Tinder. Quanto mais mensagens
+                  aparecerem, melhor a leitura do contexto.
+                </span>
+                <div className="mt-1 flex w-full flex-col gap-2 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="heat-gradient heat-glow flex-1 rounded-2xl py-3 text-sm font-semibold text-primary-foreground transition-all active:scale-[0.98]"
+                  >
+                    Escolher da galeria
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => cameraRef.current?.click()}
+                    className="cool-gradient cool-glow flex-1 rounded-2xl py-3 text-sm font-semibold text-azul-foreground transition-all active:scale-[0.98]"
+                  >
+                    Tirar foto
+                  </button>
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap justify-center gap-2 text-[11px] text-muted-foreground">
+                {["Print nítido", "Últimas mensagens", "Sem cortar o texto"].map((t) => (
+                  <span key={t} className="rounded-full border border-border bg-secondary/40 px-2.5 py-1">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
           )}
+
           <PrivacyNote />
         </div>
       )}
