@@ -239,17 +239,16 @@ function App() {
 
   if (status && !status.ativo && !admin) return <ManutencaoScreen mensagem={status.mensagem} />;
 
-  // Primeira abertura do app instalado: assume a versão atual como já vista.
-  if (isAppInstalado() && status && versaoVista === 0) {
+  // Primeira abertura: assume a versão atual como já vista.
+  if (status && versaoVista === 0) {
     guardarVersaoVista(status.versao);
     setVersaoVista(status.versao);
     return null;
   }
 
-  // Só no aplicativo instalado: quando o administrador reativa depois de desligar,
-  // a versão sobe e o app pede para baixar a nova versão. No site isto nunca aparece.
-  const temNovaVersao =
-    isAppInstalado() && status && status.versao > versaoVista && !admin;
+  // Quando o administrador reativa depois de desligar, a versão sobe e todos
+  // os utilizadores (site e aplicativo) veem o botão para baixar a atualização.
+  const temNovaVersao = status && status.versao > versaoVista && !admin;
   if (temNovaVersao && status)
     return (
       <NovaVersaoScreen
