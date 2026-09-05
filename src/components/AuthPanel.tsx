@@ -14,6 +14,47 @@ export function AuthPanel({ onEnter }: { onEnter: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<null | { hasSession: boolean }>(null);
+  const [recovery, setRecovery] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (/type=recovery/.test(hash) || /type=recovery/.test(window.location.search)) setRecovery(true);
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setRecovery(true);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const enviarReset = async () => {
+    if (!email.trim()) {
+      setError("Escreve o teu e-mail primeiro.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin,
+    });
+    setLoading(false);
+    if (error) setError("Não foi possível enviar o e-mail. Tenta de novo.");
+    else setResetSent(true);
+  };
+
+  const guardarNovaPass = async () => {
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.updateUser({ password });
+    setLoading(false);
+    if (error) {
+      setError("Não foi possível guardar. Usa pelo menos 6 caracteres.");
+      return;
+    }
+    window.history.replaceState({}, "", window.location.pathname);
+    setRecovery(false);
+    onEnter();
+  };
+
 
   const submit = async () => {
     setLoading(true);
