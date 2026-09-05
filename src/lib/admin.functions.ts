@@ -59,10 +59,9 @@ export const listarUtilizadores = createServerFn({ method: "POST" })
   });
 
 export const confirmarUtilizador = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ userId: z.string().uuid() }).parse(input))
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+  .inputValidator((input) => comCodigo({ userId: z.string().uuid() }).parse(input))
+  .handler(async ({ data }) => {
+    assertCodigo(data.codigo);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
       email_confirm: true,
@@ -72,12 +71,11 @@ export const confirmarUtilizador = createServerFn({ method: "POST" })
   });
 
 export const definirPalavraPasse = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
-    z.object({ userId: z.string().uuid(), password: z.string().min(6).max(72) }).parse(input),
+    comCodigo({ userId: z.string().uuid(), password: z.string().min(6).max(72) }).parse(input),
   )
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+  .handler(async ({ data }) => {
+    assertCodigo(data.codigo);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
       password: data.password,
