@@ -552,6 +552,15 @@ function Gerador({
             className="hidden"
             onChange={(e) => onFile(e.target.files?.[0])}
           />
+          <input
+            ref={cameraRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={(e) => onFile(e.target.files?.[0])}
+          />
+
           {image ? (
             <div className="surface-card space-y-3 overflow-hidden p-3">
               <div className="relative overflow-hidden rounded-xl border border-border">
