@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Flame, Loader2, Lock, Mail, ArrowRight, CheckCircle2, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Flame, Loader2, Lock, Mail, ArrowRight, CheckCircle2, KeyRound, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,47 @@ export function AuthPanel({ onEnter }: { onEnter: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<null | { hasSession: boolean }>(null);
+  const [recovery, setRecovery] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (/type=recovery/.test(hash) || /type=recovery/.test(window.location.search)) setRecovery(true);
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setRecovery(true);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const enviarReset = async () => {
+    if (!email.trim()) {
+      setError("Escreve o teu e-mail primeiro.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin,
+    });
+    setLoading(false);
+    if (error) setError("Não foi possível enviar o e-mail. Tenta de novo.");
+    else setResetSent(true);
+  };
+
+  const guardarNovaPass = async () => {
+    setLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.updateUser({ password });
+    setLoading(false);
+    if (error) {
+      setError("Não foi possível guardar. Usa pelo menos 6 caracteres.");
+      return;
+    }
+    window.history.replaceState({}, "", window.location.pathname);
+    setRecovery(false);
+    onEnter();
+  };
+
 
   const submit = async () => {
     setLoading(true);
@@ -68,6 +109,45 @@ export function AuthPanel({ onEnter }: { onEnter: () => void }) {
     if (result.redirected) return;
     onEnter();
   };
+
+  if (recovery) {
+    return (
+      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-10">
+        <div className="surface-card animate-rise space-y-5 p-7">
+          <div className="mx-auto grid size-16 place-items-center rounded-full bg-secondary/60">
+            <KeyRound className="size-8 text-primary" />
+          </div>
+          <div className="space-y-2 text-center">
+            <h1 className="text-2xl font-bold">Nova palavra-passe</h1>
+            <p className="text-sm text-muted-foreground">Escolhe uma nova e entra logo a seguir.</p>
+          </div>
+          <Field icon={<Lock className="size-4" />}>
+            <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              autoComplete="new-password"
+              placeholder="nova palavra-passe"
+              className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground"
+            />
+          </Field>
+          {error && (
+            <p className="rounded-2xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              {error}
+            </p>
+          )}
+          <button
+            type="button"
+            disabled={loading || password.length < 6}
+            onClick={guardarNovaPass}
+            className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
+          >
+            {loading && <Loader2 className="size-5 animate-spin" />} Guardar e entrar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (created) {
     return (
@@ -195,6 +275,22 @@ export function AuthPanel({ onEnter }: { onEnter: () => void }) {
             {loading && <Loader2 className="size-5 animate-spin" />}
             {mode === "login" ? "Entrar" : "Criar conta"}
           </button>
+
+          {mode === "login" &&
+            (resetSent ? (
+              <p className="rounded-2xl border border-border bg-secondary/40 p-3 text-center text-xs text-muted-foreground">
+                Enviámos um link para {email.trim()}. Abre-o e escolhe a nova palavra-passe.
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={enviarReset}
+                disabled={loading}
+                className="w-full text-center text-xs font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline disabled:opacity-50"
+              >
+                Esqueci a palavra-passe
+              </button>
+            ))}
 
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="h-px flex-1 bg-border" /> ou <span className="h-px flex-1 bg-border" />
