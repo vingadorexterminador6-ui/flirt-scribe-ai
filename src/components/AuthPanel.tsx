@@ -276,6 +276,22 @@ export function AuthPanel({ onEnter }: { onEnter: () => void }) {
             {mode === "login" ? "Entrar" : "Criar conta"}
           </button>
 
+          {mode === "login" &&
+            (resetSent ? (
+              <p className="rounded-2xl border border-border bg-secondary/40 p-3 text-center text-xs text-muted-foreground">
+                Enviámos um link para {email.trim()}. Abre-o e escolhe a nova palavra-passe.
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={enviarReset}
+                disabled={loading}
+                className="w-full text-center text-xs font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline disabled:opacity-50"
+              >
+                Esqueci a palavra-passe
+              </button>
+            ))}
+
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="h-px flex-1 bg-border" /> ou <span className="h-px flex-1 bg-border" />
           </div>
