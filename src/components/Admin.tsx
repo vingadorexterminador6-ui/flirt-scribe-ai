@@ -4,6 +4,7 @@ import { ArrowLeft, KeyRound, Loader2, Power, ShieldCheck, Users } from "lucide-
 import {
   confirmarUtilizador,
   definirEstadoApp,
+  entrarAdmin,
   definirPalavraPasse,
   listarUtilizadores,
   type AdminUser,
