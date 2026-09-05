@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Flame, Loader2, Lock, Mail, ArrowRight, CheckCircle2, KeyRound, User } from "lucide-react";
+import { Flame, Loader2, Lock, Mail, ArrowRight, CheckCircle2, KeyRound, ShieldCheck, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { cn } from "@/lib/utils";
 
 type Mode = "login" | "signup";
 
-export function AuthPanel({ onEnter }: { onEnter: () => void }) {
+export function AuthPanel({ onEnter, onAdmin }: { onEnter: () => void; onAdmin?: () => void }) {
   const [mode, setMode] = useState<Mode>("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -304,6 +304,16 @@ export function AuthPanel({ onEnter }: { onEnter: () => void }) {
             <GoogleIcon /> Continuar com Google
           </button>
         </div>
+
+        {onAdmin && (
+          <button
+            type="button"
+            onClick={onAdmin}
+            className="flex w-full items-center justify-center gap-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-primary"
+          >
+            <ShieldCheck className="size-4" /> Área de administrador
+          </button>
+        )}
 
         <p className="px-2 text-center text-xs leading-relaxed text-muted-foreground">
           As tuas conversas são privadas. Nada do que envias fica guardado nos nossos servidores.
