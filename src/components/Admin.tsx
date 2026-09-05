@@ -63,7 +63,7 @@ export function AdminGate({
   onEntrarApp,
 }: {
   onBack: () => void;
-  onEntrarApp?: (codigo: string) => void;
+  onEntrarApp?: ((codigo: string) => void) | undefined;
 }) {
   const entrar = useServerFn(entrarAdmin);
   const [codigo, setCodigo] = useState("");
@@ -142,7 +142,7 @@ export function AdminPanel({
 }: {
   onBack: () => void;
   codigo: string;
-  onEntrarApp?: (codigo: string) => void;
+  onEntrarApp?: ((codigo: string) => void) | undefined;
 }) {
   const { isAdmin, status, loading, refresh } = useAdmin();
   const guardarEstado = useServerFn(definirEstadoApp);
