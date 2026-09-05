@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Loader2, Power, ShieldCheck } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowLeft, KeyRound, Loader2, Power, ShieldCheck, Users } from "lucide-react";
+import {
+  confirmarUtilizador,
+  definirPalavraPasse,
+  listarUtilizadores,
+  type AdminUser,
+} from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -145,9 +152,158 @@ export function AdminPanel({ onBack }: { onBack: () => void }) {
           {status?.ativo ? "Desativar aplicativo" : "Ativar aplicativo"}
         </button>
       </div>
+
+      <Utilizadores />
     </div>
   );
 }
+
+function Utilizadores() {
+  const listar = useServerFn(listarUtilizadores);
+  const confirmar = useServerFn(confirmarUtilizador);
+  const definir = useServerFn(definirPalavraPasse);
+
+  const [users, setUsers] = useState<AdminUser[] | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [nova, setNova] = useState("");
+  const [aviso, setAviso] = useState<string | null>(null);
+
+  const carregar = async () => {
+    setErro(null);
+    try {
+      setUsers(await listar({ data: {} as never }));
+    } catch {
+      setErro("Não foi possível carregar as contas.");
+      setUsers([]);
+    }
+  };
+
+  useEffect(() => {
+    void carregar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const acao = async (id: string, fn: () => Promise<unknown>, msg: string) => {
+    setBusy(id);
+    setAviso(null);
+    setErro(null);
+    try {
+      await fn();
+      setAviso(msg);
+      await carregar();
+    } catch {
+      setErro("Não foi possível concluir. Tenta de novo.");
+    }
+    setBusy(null);
+  };
+
+  return (
+    <div className="surface-card space-y-4 p-5">
+      <div className="flex items-center justify-between">
+        <h2 className="flex items-center gap-2 font-semibold">
+          <Users className="size-4 text-primary" /> Contas criadas
+        </h2>
+        <span className="text-xs text-muted-foreground">{users?.length ?? 0}</span>
+      </div>
+
+      {aviso && (
+        <p className="rounded-2xl border border-border bg-secondary/40 p-3 text-sm">{aviso}</p>
+      )}
+      {erro && (
+        <p className="rounded-2xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+          {erro}
+        </p>
+      )}
+
+      {users === null ? (
+        <div className="grid place-items-center py-6">
+          <Loader2 className="size-5 animate-spin text-primary" />
+        </div>
+      ) : users.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Ainda não há contas.</p>
+      ) : (
+        <ul className="space-y-3">
+          {users.map((u) => (
+            <li key={u.id} className="rounded-2xl border border-border bg-card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold">{u.nome || u.email}</p>
+                  <p className="truncate text-xs text-muted-foreground">{u.email}</p>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Criada em {new Date(u.criadoEm).toLocaleDateString("pt-PT")}
+                  </p>
+                </div>
+                <span
+                  className={cn(
+                    "shrink-0 rounded-full px-2 py-1 text-[11px] font-semibold",
+                    u.verificado
+                      ? "bg-secondary/60 text-primary"
+                      : "bg-destructive/10 text-destructive",
+                  )}
+                >
+                  {u.verificado ? "Verificada" : "Por verificar"}
+                </span>
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                {!u.verificado && (
+                  <button
+                    type="button"
+                    disabled={busy === u.id}
+                    onClick={() =>
+                      void acao(u.id, () => confirmar({ data: { userId: u.id } }), "Conta verificada.")
+                    }
+                    className="rounded-xl border border-border bg-secondary/40 px-3 py-2 text-xs font-semibold disabled:opacity-50"
+                  >
+                    Verificar agora
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpenId(openId === u.id ? null : u.id);
+                    setNova("");
+                  }}
+                  className="flex items-center gap-1.5 rounded-xl border border-border bg-secondary/40 px-3 py-2 text-xs font-semibold"
+                >
+                  <KeyRound className="size-3.5" /> Nova palavra-passe
+                </button>
+              </div>
+
+              {openId === u.id && (
+                <div className="mt-3 flex gap-2">
+                  <input
+                    value={nova}
+                    onChange={(e) => setNova(e.target.value)}
+                    placeholder="mínimo 6 caracteres"
+                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  <button
+                    type="button"
+                    disabled={nova.length < 6 || busy === u.id}
+                    onClick={() =>
+                      void acao(
+                        u.id,
+                        () => definir({ data: { userId: u.id, password: nova } }),
+                        "Palavra-passe alterada. Partilha-a com a pessoa.",
+                      ).then(() => setOpenId(null))
+                    }
+                    className="fusion-gradient shrink-0 rounded-xl px-4 text-xs font-semibold text-primary-foreground disabled:opacity-50"
+                  >
+                    Guardar
+                  </button>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 
 function BackBar({ onBack }: { onBack: () => void }) {
   return (
