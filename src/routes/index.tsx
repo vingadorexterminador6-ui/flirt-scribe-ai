@@ -442,6 +442,8 @@ function Gerador({
   const [error, setError] = useState<string | null>(null);
   const online = useOnline();
   const fileRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
+
 
   const meta = MENU.find((m) => m.id === screen)!;
   const categories =
