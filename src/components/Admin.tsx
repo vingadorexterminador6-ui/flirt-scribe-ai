@@ -184,6 +184,18 @@ export function AdminPanel({ onBack, codigo }: { onBack: () => void; codigo: str
         </p>
       </header>
 
+      {onEntrarApp && (
+        <button
+          type="button"
+          onClick={() => onEntrarApp(codigo)}
+          className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98]"
+        >
+          <Rocket className="size-5" /> Entrar no aplicativo sem conta
+        </button>
+      )}
+
+
+
       <div className="surface-card space-y-4 p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
