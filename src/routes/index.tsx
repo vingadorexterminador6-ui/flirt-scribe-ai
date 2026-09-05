@@ -28,6 +28,15 @@ import { useHistory } from "@/lib/history";
 import { AuthPanel } from "@/components/AuthPanel";
 import { AdminGate, ManutencaoScreen, useAdmin } from "@/components/Admin";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  guardarAdminApp,
+  isAppInstalado,
+  lerAdminApp,
+  limparAdminApp,
+  limparSessaoNavegador,
+  marcarSessaoNavegador,
+  sessaoNavegadorValida,
+} from "@/lib/appMode";
 import { cn } from "@/lib/utils";
 
 
