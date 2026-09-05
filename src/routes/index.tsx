@@ -318,64 +318,64 @@ function TabButton({
 
 function Home({ onOpen }: { onOpen: (s: Screen) => void }) {
   return (
-    <div className="animate-rise space-y-6">
-      <header className="space-y-3 pt-6 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground shadow-sm">
-          <Flame className="size-3.5 text-primary" /> Conversa Quente AI
-          <span className="size-1 rounded-full bg-azul" />
-          <span className="cool-text font-semibold">sincroniza com os teus apps</span>
-        </span>
-        <h1 className="text-[2rem] font-bold leading-tight tracking-tight">
-          Nunca mais fique sem saber <span className="fusion-text">o que responder.</span>
-        </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Envie a mensagem ou screenshot. A IA entende o contexto, adapta ao app que você usa e cria
-          a resposta perfeita.
-        </p>
-      </header>
-
-
+    <div className="animate-rise space-y-6 pt-2">
       <div className="space-y-3">
-        {MENU.map((m, i) => (
-          <button
-            key={m.id}
-            type="button"
-            onClick={() => onOpen(m.id)}
-            className={cn(
-              "surface-card animate-rise flex w-full items-center gap-4 p-4 text-left transition-all duration-200 active:scale-[0.98]",
-              m.id === "screenshot" && "heat-gradient heat-glow border-transparent",
-            )}
-            style={{ animationDelay: `${i * 60}ms` }}
-          >
-            <span
+        {MENU.map((m, i) => {
+          const azulCard = i % 2 === 1;
+          return (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => onOpen(m.id)}
               className={cn(
-                "grid size-12 shrink-0 place-items-center rounded-2xl text-xl",
-                m.id === "screenshot" ? "bg-background/25" : "bg-secondary/70",
+                "surface-card animate-rise relative flex w-full items-center gap-4 overflow-hidden p-4 text-left transition-all duration-200 active:scale-[0.98]",
+                m.id === "screenshot" && "fusion-gradient heat-glow border-transparent",
               )}
+              style={{ animationDelay: `${i * 60}ms` }}
             >
-              {m.emoji}
-            </span>
-            <span className="min-w-0 flex-1">
+              {m.id !== "screenshot" && (
+                <span
+                  className={cn(
+                    "absolute inset-y-0 left-0 w-1.5",
+                    azulCard ? "cool-gradient" : "heat-gradient",
+                  )}
+                />
+              )}
               <span
                 className={cn(
-                  "block text-base font-semibold",
-                  m.id === "screenshot" && "text-primary-foreground",
+                  "grid size-12 shrink-0 place-items-center rounded-2xl text-xl",
+                  m.id === "screenshot"
+                    ? "bg-background/25"
+                    : azulCard
+                      ? "bg-azul/15 ring-1 ring-azul/40"
+                      : "bg-primary/15 ring-1 ring-primary/40",
                 )}
               >
-                {m.title}
+                {m.emoji}
               </span>
-              <span
-                className={cn(
-                  "block text-sm",
-                  m.id === "screenshot" ? "text-primary-foreground/80" : "text-muted-foreground",
-                )}
-              >
-                {m.subtitle}
+              <span className="min-w-0 flex-1">
+                <span
+                  className={cn(
+                    "block text-base font-semibold",
+                    m.id === "screenshot" && "text-primary-foreground",
+                  )}
+                >
+                  {m.title}
+                </span>
+                <span
+                  className={cn(
+                    "block text-sm",
+                    m.id === "screenshot" ? "text-primary-foreground/80" : "text-muted-foreground",
+                  )}
+                >
+                  {m.subtitle}
+                </span>
               </span>
-            </span>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
+
 
       <PrivacyNote />
     </div>
@@ -442,6 +442,8 @@ function Gerador({
   const [error, setError] = useState<string | null>(null);
   const online = useOnline();
   const fileRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
+
 
   const meta = MENU.find((m) => m.id === screen)!;
   const categories =
@@ -552,35 +554,84 @@ function Gerador({
             className="hidden"
             onChange={(e) => onFile(e.target.files?.[0])}
           />
+          <input
+            ref={cameraRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={(e) => onFile(e.target.files?.[0])}
+          />
+
           {image ? (
-            <div className="surface-card relative overflow-hidden p-2">
-              <img src={image} alt="Screenshot da conversa" className="w-full rounded-xl" />
-              <button
-                type="button"
-                onClick={() => {
-                  setImage(null);
-                  setResult(null);
-                  if (fileRef.current) fileRef.current.value = "";
-                }}
-                className="absolute right-4 top-4 grid size-9 place-items-center rounded-full bg-background/80 backdrop-blur"
-                aria-label="Apagar imagem"
-              >
-                <X className="size-4" />
-              </button>
+            <div className="surface-card space-y-3 overflow-hidden p-3">
+              <div className="relative overflow-hidden rounded-xl border border-border">
+                <img src={image} alt="Screenshot da conversa" className="w-full" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImage(null);
+                    setResult(null);
+                    if (fileRef.current) fileRef.current.value = "";
+                  }}
+                  className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-background/80 backdrop-blur"
+                  aria-label="Apagar imagem"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="inline-flex items-center gap-2 text-xs font-medium text-azul">
+                  <Shield className="size-3.5" /> Imagem pronta para análise
+                </span>
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  className="rounded-full border border-border bg-secondary/50 px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-secondary"
+                >
+                  Trocar imagem
+                </button>
+              </div>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="surface-card flex w-full flex-col items-center gap-2 border-dashed p-8 text-center transition-colors hover:bg-secondary/30"
-            >
-              <Camera className="size-7 text-primary" />
-              <span className="font-semibold">Carregar screenshot</span>
-              <span className="text-sm text-muted-foreground">
-                Print do WhatsApp, Instagram ou Messenger
-              </span>
-            </button>
+            <div className="surface-card relative overflow-hidden p-5">
+              <span className="fusion-gradient absolute inset-x-0 top-0 h-1" />
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border/80 bg-secondary/20 px-4 py-7 text-center">
+                <span className="grid size-14 place-items-center rounded-2xl bg-primary/15 ring-1 ring-primary/40">
+                  <Camera className="size-7 text-primary" />
+                </span>
+                <span className="text-base font-semibold">Envie o print da conversa</span>
+                <span className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+                  WhatsApp, Instagram, Telegram, Messenger ou Tinder. Quanto mais mensagens
+                  aparecerem, melhor a leitura do contexto.
+                </span>
+                <div className="mt-1 flex w-full flex-col gap-2 sm:flex-row">
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="heat-gradient heat-glow flex-1 rounded-2xl py-3 text-sm font-semibold text-primary-foreground transition-all active:scale-[0.98]"
+                  >
+                    Escolher da galeria
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => cameraRef.current?.click()}
+                    className="cool-gradient cool-glow flex-1 rounded-2xl py-3 text-sm font-semibold text-azul-foreground transition-all active:scale-[0.98]"
+                  >
+                    Tirar foto
+                  </button>
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap justify-center gap-2 text-[11px] text-muted-foreground">
+                {["Print nítido", "Últimas mensagens", "Sem cortar o texto"].map((t) => (
+                  <span key={t} className="rounded-full border border-border bg-secondary/40 px-2.5 py-1">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
           )}
+
           <PrivacyNote />
         </div>
       )}
