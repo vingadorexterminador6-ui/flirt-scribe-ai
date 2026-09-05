@@ -58,6 +58,7 @@ type Screen =
   | "conquista"
   | "namorados"
   | "pensando"
+  | "admin"
   | "historico";
 
 const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: typeof Camera }[] = [
