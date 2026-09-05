@@ -8,6 +8,7 @@ import {
   Flame,
   Heart,
   Loader2,
+  LogOut,
   MessageCircleHeart,
   Shield,
   ShieldCheck,
