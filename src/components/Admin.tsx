@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, KeyRound, Loader2, Power, ShieldCheck, Users } from "lucide-react";
 import {
   confirmarUtilizador,
+  definirEstadoApp,
   definirPalavraPasse,
   listarUtilizadores,
   type AdminUser,
