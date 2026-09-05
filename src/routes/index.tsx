@@ -26,7 +26,7 @@ import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
 import { CopyButton, Sugestoes } from "@/components/Sugestoes";
 import { useHistory } from "@/lib/history";
 import { AuthPanel } from "@/components/AuthPanel";
-import { AdminPanel, ManutencaoScreen, useAdmin } from "@/components/Admin";
+import { AdminGate, ManutencaoScreen, useAdmin } from "@/components/Admin";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -159,6 +159,7 @@ function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
   const [session, setSession] = useState<boolean | null>(null);
+  const [adminAberto, setAdminAberto] = useState(false);
   const { isAdmin, status, loading: adminLoading, refresh } = useAdmin();
 
   useEffect(() => {
@@ -179,7 +180,10 @@ function App() {
     );
   }
 
-  if (!session) return <AuthPanel onEnter={() => setSession(true)} />;
+  if (adminAberto) return <AdminGate onBack={() => setAdminAberto(false)} />;
+
+  if (!session)
+    return <AuthPanel onEnter={() => setSession(true)} onAdmin={() => setAdminAberto(true)} />;
 
   if (status && !status.ativo && !isAdmin) return <ManutencaoScreen mensagem={status.mensagem} />;
 
@@ -190,7 +194,7 @@ function App() {
       ) : screen === "historico" ? (
         <Historico onBack={() => setScreen("home")} />
       ) : screen === "admin" ? (
-        <AdminPanel onBack={() => setScreen("home")} />
+        <AdminGate onBack={() => setScreen("home")} />
       ) : (
         <Gerador key={screen} screen={screen} prefs={prefs} setPrefs={setPrefs} onBack={() => setScreen("home")} />
       )}
@@ -209,7 +213,7 @@ function App() {
             icon={<Clock className="size-5" />}
             label="Histórico"
           />
-          {isAdmin && (
+          {(
             <TabButton
               active={screen === "admin"}
               onClick={() => setScreen("admin")}
