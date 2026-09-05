@@ -213,14 +213,12 @@ function App() {
             icon={<Clock className="size-5" />}
             label="Histórico"
           />
-          {(
-            <TabButton
-              active={screen === "admin"}
-              onClick={() => setScreen("admin")}
-              icon={<ShieldCheck className="size-5" />}
-              label="Admin"
-            />
-          )}
+          <TabButton
+            active={screen === "admin"}
+            onClick={() => setScreen("admin")}
+            icon={<ShieldCheck className="size-5" />}
+            label="Admin"
+          />
           <TabButton
             active={false}
             onClick={async () => {
