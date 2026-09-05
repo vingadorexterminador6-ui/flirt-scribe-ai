@@ -28,6 +28,15 @@ import { useHistory } from "@/lib/history";
 import { AuthPanel } from "@/components/AuthPanel";
 import { AdminGate, ManutencaoScreen, useAdmin } from "@/components/Admin";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  guardarAdminApp,
+  isAppInstalado,
+  lerAdminApp,
+  limparAdminApp,
+  limparSessaoNavegador,
+  marcarSessaoNavegador,
+  sessaoNavegadorValida,
+} from "@/lib/appMode";
 import { cn } from "@/lib/utils";
 
 
@@ -160,17 +169,47 @@ function App() {
   const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
   const [session, setSession] = useState<boolean | null>(null);
   const [adminAberto, setAdminAberto] = useState(false);
+  const [adminCodigo, setAdminCodigo] = useState<string | null>(null);
   const { isAdmin, status, loading: adminLoading, refresh } = useAdmin();
+  const admin = isAdmin || !!adminCodigo;
 
   useEffect(() => {
+    setAdminCodigo(lerAdminApp());
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(!!s);
+      if (s) marcarSessaoNavegador();
       void refresh();
     });
-    supabase.auth.getSession().then(({ data }) => setSession(!!data.session));
+    void (async () => {
+      const { data } = await supabase.auth.getSession();
+      // No site, a sessão só vale enquanto o navegador estiver aberto.
+      if (data.session && !isAppInstalado() && !sessaoNavegadorValida()) {
+        await supabase.auth.signOut();
+        setSession(false);
+        return;
+      }
+      if (data.session) marcarSessaoNavegador();
+      setSession(!!data.session);
+    })();
     return () => sub.subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const sair = async () => {
+    limparSessaoNavegador();
+    limparAdminApp();
+    setAdminCodigo(null);
+    await supabase.auth.signOut();
+    setScreen("home");
+    setSession(false);
+  };
+
+  const entrarComoAdmin = (codigo: string) => {
+    guardarAdminApp(codigo);
+    setAdminCodigo(codigo);
+    setAdminAberto(false);
+    setScreen("home");
+  };
 
   if (session === null || adminLoading) {
     return (
@@ -180,12 +219,13 @@ function App() {
     );
   }
 
-  if (adminAberto) return <AdminGate onBack={() => setAdminAberto(false)} />;
+  if (adminAberto)
+    return <AdminGate onBack={() => setAdminAberto(false)} onEntrarApp={entrarComoAdmin} />;
 
-  if (!session)
+  if (!session && !adminCodigo)
     return <AuthPanel onEnter={() => setSession(true)} onAdmin={() => setAdminAberto(true)} />;
 
-  if (status && !status.ativo && !isAdmin) return <ManutencaoScreen mensagem={status.mensagem} />;
+  if (status && !status.ativo && !admin) return <ManutencaoScreen mensagem={status.mensagem} />;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 pb-28 pt-6">
@@ -194,7 +234,7 @@ function App() {
       ) : screen === "historico" ? (
         <Historico onBack={() => setScreen("home")} />
       ) : screen === "admin" ? (
-        <AdminGate onBack={() => setScreen("home")} />
+        <AdminGate onBack={() => setScreen("home")} onEntrarApp={entrarComoAdmin} />
       ) : (
         <Gerador key={screen} screen={screen} prefs={prefs} setPrefs={setPrefs} onBack={() => setScreen("home")} />
       )}
@@ -213,23 +253,22 @@ function App() {
             icon={<Clock className="size-5" />}
             label="Histórico"
           />
-          <TabButton
-            active={screen === "admin"}
-            onClick={() => setScreen("admin")}
-            icon={<ShieldCheck className="size-5" />}
-            label="Admin"
-          />
+          {admin && (
+            <TabButton
+              active={screen === "admin"}
+              onClick={() => setScreen("admin")}
+              icon={<ShieldCheck className="size-5" />}
+              label="Admin"
+            />
+          )}
           <TabButton
             active={false}
-            onClick={async () => {
-              await supabase.auth.signOut();
-              setScreen("home");
-              setSession(false);
-            }}
+            onClick={() => void sair()}
             icon={<LogOut className="size-5" />}
             label="Sair"
           />
         </div>
+
       </nav>
     </main>
   );

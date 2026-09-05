@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, KeyRound, Loader2, Power, ShieldCheck, Users } from "lucide-react";
+import { ArrowLeft, KeyRound, Loader2, Power, Rocket, ShieldCheck, Users } from "lucide-react";
 import {
   confirmarUtilizador,
   definirEstadoApp,
@@ -58,14 +58,20 @@ export function ManutencaoScreen({ mensagem }: { mensagem: string }) {
 }
 
 /** Pede o código de administrador antes de abrir o painel. Não exige conta. */
-export function AdminGate({ onBack }: { onBack: () => void }) {
+export function AdminGate({
+  onBack,
+  onEntrarApp,
+}: {
+  onBack: () => void;
+  onEntrarApp?: ((codigo: string) => void) | undefined;
+}) {
   const entrar = useServerFn(entrarAdmin);
   const [codigo, setCodigo] = useState("");
   const [ok, setOk] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  if (ok) return <AdminPanel codigo={ok} onBack={onBack} />;
+  if (ok) return <AdminPanel codigo={ok} onBack={onBack} onEntrarApp={onEntrarApp} />;
 
   const validar = async () => {
     setBusy(true);
@@ -129,7 +135,15 @@ export function AdminGate({ onBack }: { onBack: () => void }) {
   );
 }
 
-export function AdminPanel({ onBack, codigo }: { onBack: () => void; codigo: string }) {
+export function AdminPanel({
+  onBack,
+  codigo,
+  onEntrarApp,
+}: {
+  onBack: () => void;
+  codigo: string;
+  onEntrarApp?: ((codigo: string) => void) | undefined;
+}) {
   const { isAdmin, status, loading, refresh } = useAdmin();
   const guardarEstado = useServerFn(definirEstadoApp);
   const [saving, setSaving] = useState(false);
@@ -183,6 +197,18 @@ export function AdminPanel({ onBack, codigo }: { onBack: () => void; codigo: str
           Liga ou desliga o aplicativo para todos os utilizadores.
         </p>
       </header>
+
+      {onEntrarApp && (
+        <button
+          type="button"
+          onClick={() => onEntrarApp(codigo)}
+          className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98]"
+        >
+          <Rocket className="size-5" /> Entrar no aplicativo sem conta
+        </button>
+      )}
+
+
 
       <div className="surface-card space-y-4 p-5">
         <div className="flex items-center justify-between gap-4">
