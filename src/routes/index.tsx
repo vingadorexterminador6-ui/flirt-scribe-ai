@@ -24,6 +24,7 @@ import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
 import { CopyButton, Sugestoes } from "@/components/Sugestoes";
 import { useHistory } from "@/lib/history";
 import { AuthPanel } from "@/components/AuthPanel";
+import { AdminPanel, ManutencaoScreen, useAdmin } from "@/components/Admin";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
