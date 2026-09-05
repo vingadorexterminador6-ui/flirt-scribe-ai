@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Flame, Loader2, Lock, Mail, ArrowRight, CheckCircle2, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Flame, Loader2, Lock, Mail, ArrowRight, CheckCircle2, KeyRound, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { cn } from "@/lib/utils";
