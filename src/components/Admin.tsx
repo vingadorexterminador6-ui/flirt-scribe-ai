@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, KeyRound, Loader2, Power, Rocket, ShieldCheck, Users } from "lucide-react";
+import { ArrowLeft, Download, KeyRound, Loader2, Power, Rocket, ShieldCheck, Users } from "lucide-react";
 import {
   confirmarUtilizador,
   definirEstadoApp,
@@ -12,7 +12,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
-export type AppStatus = { ativo: boolean; mensagem: string };
+export type AppStatus = { ativo: boolean; mensagem: string; versao: number };
 
 /** Descobre se o utilizador atual é administrador e o estado do aplicativo. */
 export function useAdmin() {
@@ -27,10 +27,10 @@ export function useAdmin() {
       uid
         ? supabase.from("user_roles").select("role").eq("user_id", uid).eq("role", "admin").maybeSingle()
         : Promise.resolve({ data: null }),
-      supabase.from("app_status").select("ativo, mensagem").maybeSingle(),
+      supabase.from("app_status").select("ativo, mensagem, versao").maybeSingle(),
     ]);
     setIsAdmin(!!roles.data);
-    setStatus(st.data ?? { ativo: true, mensagem: "" });
+    setStatus(st.data ?? { ativo: true, mensagem: "", versao: 1 });
     setLoading(false);
   };
 
@@ -52,6 +52,30 @@ export function ManutencaoScreen({ mensagem }: { mensagem: string }) {
         <p className="text-sm leading-relaxed text-muted-foreground">
           {mensagem || "Estamos a melhorar o aplicativo. Volta daqui a pouco!"}
         </p>
+      </div>
+    </main>
+  );
+}
+
+/** Mostrada só no aplicativo instalado quando existe uma versão nova. */
+export function NovaVersaoScreen({ onBaixar }: { onBaixar: () => void }) {
+  return (
+    <main className="mx-auto grid min-h-screen w-full max-w-md place-items-center px-6 text-center">
+      <div className="surface-card animate-rise space-y-4 p-8">
+        <div className="mx-auto grid size-16 place-items-center rounded-full bg-secondary/60">
+          <Download className="size-8 text-primary" />
+        </div>
+        <h1 className="text-2xl font-bold">Nova versão disponível</h1>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          O Conversa Quente AI foi atualizado. Baixa a nova versão para continuar com todas as novidades.
+        </p>
+        <button
+          type="button"
+          onClick={onBaixar}
+          className="fusion-gradient heat-glow flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98]"
+        >
+          <Download className="size-5" /> Baixar nova versão
+        </button>
       </div>
     </main>
   );
