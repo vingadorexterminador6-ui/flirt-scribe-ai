@@ -26,7 +26,7 @@ import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
 import { CopyButton, Sugestoes } from "@/components/Sugestoes";
 import { useHistory } from "@/lib/history";
 import { AuthPanel } from "@/components/AuthPanel";
-import { AdminGate, ManutencaoScreen, useAdmin } from "@/components/Admin";
+import { AdminGate, ManutencaoScreen, NovaVersaoScreen, useAdmin } from "@/components/Admin";
 import { supabase } from "@/integrations/supabase/client";
 import {
   guardarAdminApp,
@@ -36,7 +36,8 @@ import {
   limparSessaoNavegador,
   marcarSessaoNavegador,
   sessaoNavegadorValida,
-} from "@/lib/appMode";
+  lerVersaoVista,
+  guardarVersaoVista,} from "@/lib/appMode";
 import { cn } from "@/lib/utils";
 
 
@@ -170,6 +171,7 @@ function App() {
   const [session, setSession] = useState<boolean | null>(null);
   const [adminAberto, setAdminAberto] = useState(false);
   const [adminCodigo, setAdminCodigo] = useState<string | null>(null);
+  const [versaoVista, setVersaoVista] = useState(() => (isAppInstalado() ? lerVersaoVista() : 0));
   const { isAdmin, status, loading: adminLoading, refresh } = useAdmin();
   const admin = isAdmin || !!adminCodigo;
 
@@ -226,6 +228,28 @@ function App() {
     return <AuthPanel onEnter={() => setSession(true)} onAdmin={() => setAdminAberto(true)} />;
 
   if (status && !status.ativo && !admin) return <ManutencaoScreen mensagem={status.mensagem} />;
+
+  // Primeira abertura do app instalado: assume a versão atual como já vista.
+  if (isAppInstalado() && status && versaoVista === 0) {
+    guardarVersaoVista(status.versao);
+    setVersaoVista(status.versao);
+    return null;
+  }
+
+  // Só no aplicativo instalado: quando o administrador reativa depois de desligar,
+  // a versão sobe e o app pede para baixar a nova versão. No site isto nunca aparece.
+  const temNovaVersao =
+    isAppInstalado() && status && status.versao > versaoVista && !admin;
+  if (temNovaVersao && status)
+    return (
+      <NovaVersaoScreen
+        onBaixar={() => {
+          guardarVersaoVista(status.versao);
+          setVersaoVista(status.versao);
+          window.location.reload();
+        }}
+      />
+    );
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-4 pb-28 pt-6">

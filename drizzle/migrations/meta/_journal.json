@@ -8,6 +8,13 @@
       "when": 1788638305665,
       "tag": "0000_admin_roles_and_app_status",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788642335758,
+      "tag": "0001_app_status_versao",
+      "breakpoints": true
     }
   ]
 }
