@@ -10,6 +10,7 @@ import {
   Loader2,
   MessageCircleHeart,
   Shield,
+  ShieldCheck,
   Sparkles,
   Star,
   Trash2,
