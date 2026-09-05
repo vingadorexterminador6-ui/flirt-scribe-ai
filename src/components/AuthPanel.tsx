@@ -309,10 +309,11 @@ export function AuthPanel({ onEnter, onAdmin }: { onEnter: () => void; onAdmin?:
           <button
             type="button"
             onClick={onAdmin}
-            className="flex w-full items-center justify-center gap-2 text-xs font-semibold text-muted-foreground transition-colors hover:text-primary"
+            className="cool-gradient cool-glow flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-semibold text-azul-foreground transition-all active:scale-[0.98]"
           >
             <ShieldCheck className="size-4" /> Área de administrador
           </button>
+
         )}
 
         <p className="px-2 text-center text-xs leading-relaxed text-muted-foreground">
