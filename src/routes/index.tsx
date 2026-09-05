@@ -200,7 +200,10 @@ function App() {
       if (data.session) marcarSessaoNavegador();
       setSession(!!data.session);
     })();
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      sub.subscription.unsubscribe();
+      void supabase.removeChannel(canal);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
