@@ -42,9 +42,9 @@ export type AdminUser = {
 };
 
 export const listarUtilizadores = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<AdminUser[]> => {
-    await assertAdmin(context);
+  .inputValidator((input) => comCodigo({}).parse(input))
+  .handler(async ({ data: input }): Promise<AdminUser[]> => {
+    assertCodigo(input.codigo);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
     if (error) throw new Error(error.message);
