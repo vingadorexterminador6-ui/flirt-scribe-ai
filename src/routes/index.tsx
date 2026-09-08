@@ -9,11 +9,10 @@ import {
   Heart,
   Loader2,
   LogOut,
+  MessageCircle,
   MessageCircleHeart,
   Shield,
   ShieldCheck,
-  Sparkles,
-  Star,
   Trash2,
   Users,
   WifiOff,
@@ -44,17 +43,17 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Conversa Quente AI — Nunca fique sem saber o que responder" },
+      { title: "Conversa Quente — Nunca fique sem saber o que responder" },
       {
         name: "description",
         content:
-          "Envie a mensagem ou o screenshot da conversa e a IA cria respostas românticas, provocantes e naturais para você copiar e enviar.",
+          "Envie a mensagem ou o screenshot da conversa e receba respostas românticas, provocantes e naturais para copiar e enviar.",
       },
-      { property: "og:title", content: "Conversa Quente AI" },
+      { property: "og:title", content: "Conversa Quente" },
       {
         property: "og:description",
         content:
-          "Assistente de conversas para flerte, namoro e paquera. Respostas prontas em segundos.",
+          "Respostas prontas para flerte, namoro e paquera. Em segundos, no teu estilo.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -79,7 +78,7 @@ const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: 
     id: "screenshot",
     emoji: "📸",
     title: "Analisar Screenshot",
-    subtitle: "A IA lê a conversa e entende o contexto",
+    subtitle: "Lemos a conversa e entendemos o contexto",
     icon: Camera,
   },
   {
@@ -94,14 +93,14 @@ const MENU: { id: Screen; emoji: string; title: string; subtitle: string; icon: 
     emoji: "🥂",
     title: "Conheci Alguém Novo",
     subtitle: "Papos leves, engraçados e que chamam atenção",
-    icon: Sparkles,
+    icon: MessageCircle,
   },
   {
     id: "conquista",
     emoji: "💘",
     title: "Modo Conquista",
     subtitle: "Puxar assunto, criar mistério, convidar",
-    icon: Sparkles,
+    icon: Heart,
   },
   {
     id: "namorados",
@@ -717,7 +716,7 @@ function Gerador({
           <WifiOff className="mt-0.5 size-4 shrink-0 text-primary" />
           {offlineReady
             ? "Estás sem internet. Este modo continua a funcionar com as frases guardadas no teu aparelho."
-            : "Estás sem internet. Este modo precisa de ligação porque a IA tem de ler a tua conversa."}
+            : "Estás sem internet. Este modo precisa de ligação para ler a tua conversa."}
         </p>
       )}
 
@@ -728,7 +727,7 @@ function Gerador({
         className="fusion-gradient heat-glow w-full rounded-2xl py-4 text-base font-semibold text-primary-foreground transition-all active:scale-[0.98] disabled:opacity-50"
       >
         <span className="flex items-center justify-center gap-2">
-          {loading ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5" />}
+          {loading ? <Loader2 className="size-5 animate-spin" /> : <Flame className="size-5" />}
           Gerar
         </span>
       </button>
@@ -802,7 +801,7 @@ function Historico({ onBack }: { onBack: () => void }) {
               aria-label="Favoritar"
               className="grid size-9 place-items-center rounded-full bg-secondary/60"
             >
-              <Star className={cn("size-4", item.favorite && "fill-primary text-primary")} />
+              <Heart className={cn("size-4", item.favorite && "fill-primary text-primary")} />
             </button>
             <button
               type="button"

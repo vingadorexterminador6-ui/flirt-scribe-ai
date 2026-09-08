@@ -98,7 +98,7 @@ export function PlataformaPicker({
           Sincronizar com o app de conversas
         </p>
         <p className="text-xs text-muted-foreground/80">
-          Escolhe a plataforma: a IA adapta o estilo e envias a resposta direto no app.
+          Escolhe a plataforma: o estilo adapta-se automaticamente e envias a resposta direto no app.
         </p>
       </div>
       <div className="flex flex-wrap gap-2">

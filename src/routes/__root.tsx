@@ -77,9 +77,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Conversa Quente AI" },
+      { title: "Conversa Quente" },
       { name: "description", content: "Respostas prontas para flerte, namoro e paquera." },
-      { property: "og:title", content: "Conversa Quente AI" },
+      { property: "og:title", content: "Conversa Quente" },
       { property: "og:description", content: "Respostas prontas para flerte, namoro e paquera." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
