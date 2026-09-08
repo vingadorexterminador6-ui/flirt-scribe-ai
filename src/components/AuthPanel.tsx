@@ -187,7 +187,7 @@ export function AuthPanel({ onEnter, onAdmin }: { onEnter: () => void; onAdmin?:
       <div className="animate-rise space-y-6">
         <header className="space-y-3 text-center">
           <span className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground shadow-sm">
-            <Flame className="size-3.5 text-primary" /> Conversa Quente AI
+            <Flame className="size-3.5 text-primary" /> Conversa Quente
           </span>
           <h1 className="text-[1.9rem] font-bold leading-tight tracking-tight">
             {mode === "login" ? (

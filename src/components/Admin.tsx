@@ -67,7 +67,7 @@ export function NovaVersaoScreen({ onBaixar }: { onBaixar: () => void }) {
         </div>
         <h1 className="text-2xl font-bold">Nova atualização disponível</h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          O Conversa Quente AI foi atualizado. Baixa a nova atualização para continuar com todas as novidades.
+          O Conversa Quente foi atualizado. Baixa a nova atualização para continuar com todas as novidades.
         </p>
         <button
           type="button"
