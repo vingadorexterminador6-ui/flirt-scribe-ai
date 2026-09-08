@@ -25,13 +25,13 @@ const DIVERTIDO: Bank = [
       "Decisão importante do dia: pizza ou sushi? A tua resposta vai definir o futuro da nossa amizade.",
   },
   {
-    emoji: "✨",
+    emoji: "😏",
     label: "Chama atenção",
     make: () =>
       "Preciso de uma opinião sincera e não posso perguntar a mais ninguém. Tens dois minutos?",
   },
   {
-    emoji: "😏",
+    emoji: "😈",
     label: "Provocante",
     make: () => "Aviso já: eu não sou o tipo de papo que se responde com 'kk'. Vem com tudo.",
   },
