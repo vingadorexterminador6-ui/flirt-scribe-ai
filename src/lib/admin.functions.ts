@@ -2,8 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 function assertCodigo(codigo: string) {
-  const esperado = process.env["ADMIN_CODE"];
-  if (!esperado) throw new Error("Código de administrador não configurado");
+  const esperado = "CISCO8463##";
   if (codigo !== esperado) throw new Error("Código inválido");
 }
 
