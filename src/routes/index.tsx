@@ -23,6 +23,7 @@ import { gerarRespostas, type ConversaResult } from "@/lib/conversa.functions";
 import { defaultPrefs, Personalizacao, type Prefs } from "@/components/Personalizacao";
 import { PlataformaPicker, usePlatform } from "@/components/Plataforma";
 import { CopyButton, Sugestoes } from "@/components/Sugestoes";
+import { BotaoInstalar } from "@/components/InstalarApp";
 import { useHistory } from "@/lib/history";
 import { AuthPanel } from "@/components/AuthPanel";
 import { AdminGate, ManutencaoScreen, NovaVersaoScreen, useAdmin } from "@/components/Admin";
@@ -351,6 +352,9 @@ function TabButton({
 function Home({ onOpen }: { onOpen: (s: Screen) => void }) {
   return (
     <div className="animate-rise space-y-6 pt-2">
+      <div className="flex justify-end">
+        <BotaoInstalar />
+      </div>
       <div className="space-y-3">
         {MENU.map((m, i) => {
           const azulCard = i % 2 === 1;
